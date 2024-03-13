@@ -1,6 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Card, TextInput, useTheme } from "react-native-paper";
+import { loginQuery } from "../../api/auth";
 
 const LoginScreen = ({ navigation }) => {
   const { colors } = useTheme();
@@ -8,8 +9,14 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = React.useState("");
 
   const handleLogin = () => {
+    const userData = {
+        username,
+        password
+    }
+    loginQuery(userData)
+    navigation.goBack()
     // 在这里执行登录逻辑
-    console.log("登录信息", { username, password });
+    // console.log("登录信息", { username, password });
   };
 
   return (

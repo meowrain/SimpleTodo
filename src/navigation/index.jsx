@@ -7,7 +7,7 @@ import HomeScreen from "../screens/home-screen";
 import SettingsScreen from "../screens/settings-screen";
 import { Appbar } from "react-native-paper";
 import LoginScreen from "../screens/login-screen";
-import SingninScreen from "../screens/singin-screen";
+import RegisterScreen from "../screens/register-screen";
 function CustomNavigationBar() {
   return (
     <Appbar.Header mode="center-aligned">
@@ -65,7 +65,7 @@ export default function TodoNavigationContainer({ children }) {
                 headerShown: false,
             }
         } />
-        <Stack.Screen name="SignIn" component={SingninScreen} options={{
+        <Stack.Screen name="Register" component={RegisterScreen} options={{
             headerShown: false
         }} />
       </Stack.Navigator>

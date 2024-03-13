@@ -1,16 +1,21 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, Card, TextInput, useTheme } from "react-native-paper";
+import { registerQuery } from "../../api/auth";
 
-const SingninScreen = ({navigation}) => {
+const RegisterScreen = ({navigation}) => {
   const { colors } = useTheme();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+    const handleRegister = ()=>{
+        const userData = {
+            username,
+            password
+        }
+        registerQuery(userData)
+        navigation.goBack()
+    }
 
-  const handleLogin = () => {
-    // 在这里执行登录逻辑
-    console.log("登录信息", { username, password });
-  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -41,7 +46,7 @@ const SingninScreen = ({navigation}) => {
           </Button>
           <Button
             buttonColor={colors.primary}
-            onPress={handleLogin}
+            onPress={handleRegister}
             mode="contained"
           >
             注册
@@ -63,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SingninScreen;
+export default RegisterScreen;
