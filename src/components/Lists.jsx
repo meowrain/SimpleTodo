@@ -4,29 +4,56 @@ import { List, FAB, Portal, Card, Button } from "react-native-paper";
 import todosData from "../stores/todos.json";
 import InputTodo from "./InputTodoModal";
 import DeleteTodo from "./DeleteTodoModal";
+import UpdateTodo from "./UpdateTodoModal";
 
 const TodoLists = () => {
   const [todos, setTodos] = useState(todosData);
-  const [visible, setVisible] = useState(false);
-  const [dialogVisible, setDialogVisble] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
 
-  const showDialog = () => setDialogVisble(true);
-  const hideDialog = () => setDialogVisble(false);
-
+  //增加部分
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const showAddModal = () => setAddModalVisible(true);
+  const hideAddModal = () => setAddModalVisible(false);
   const addTodo = (task) => {
     const newTodo = {
       id: todos.length ? todos[todos.length - 1].id + 1 : 1,
       task,
     };
-
     setTodos([...todos, newTodo]);
-    hideModal();
+    hideAddModal();
   };
-  const deleteTodo = () => {
-    showDialog();
+
+  //更新部分
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState("");
+  const hideUpdateModal = () => setUpdateModalVisible(false);
+  const showUpdateModal = (task) => {
+    setTaskToUpdate(task);
+    setUpdateModalVisible(true);
   };
+  const updateTodo = (newTask) => {
+    const updatedTodos = todos.map((todo) => {
+      if (todo.task === taskToUpdate) {
+        return { ...todo, task: newTask };
+      }
+      return todo;
+    });
+    setTodos(updatedTodos);
+    setUpdateModalVisible(false);
+  };
+  //删除部分
+  const [dialogVisible, setDialogVisble] = useState(false);
+  const [currentTodoId,setCurrentTodoId] = useState(null);
+  const showDeleteDialog = (id) => {
+    console.log(id);
+    setCurrentTodoId(id)
+    setDialogVisble(true);
+  }
+  const hideDeleteDialog = () => setDialogVisble(false);
+  const handleDeleteTodo = (id)=>{
+    setDialogVisble(false);
+    setTodos(todos.filter((todo)=> todo.id !== id))
+    console.log(todos);
+  }
   return (
     <View style={styles.container}>
       <FlatList
@@ -39,26 +66,32 @@ const TodoLists = () => {
               <List.Item title={item.task} />
             </Card.Content>
             <Card.Actions>
-              <Button>修改</Button>
-              <Button onPress={deleteTodo}>删除</Button>
+              <Button onPress={() => showUpdateModal(item.task)}>修改</Button>
+              <Button onPress={()=> showDeleteDialog(item.id)}>删除</Button>
             </Card.Actions>
           </Card>
         )}
       />
       <InputTodo
-        showModal={showModal}
-        hideModal={hideModal}
-        visible={visible}
+        showModal={showAddModal}
+        hideModal={hideAddModal}
+        visible={addModalVisible}
         setTodos={setTodos}
         addTodo={addTodo}
       />
+      <UpdateTodo
+        hideModal={hideUpdateModal}
+        visible={updateModalVisible}
+        updateTodo={updateTodo}
+        taskToUpdate={taskToUpdate}
+      />
       <DeleteTodo
         visible={dialogVisible}
-        showDialog={showDialog}
-        hideDialog={hideDialog}
+        hideDialog={hideDeleteDialog}
+        onDelete={()=> handleDeleteTodo(currentTodoId)}
       />
       <Portal.Host>
-        <FAB style={styles.fab} icon="plus" onPress={showModal} />
+        <FAB style={styles.fab} icon="plus" onPress={showAddModal} />
       </Portal.Host>
     </View>
   );
