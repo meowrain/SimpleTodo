@@ -1,33 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
-import { useColorScheme } from 'react-native';
-import {
-  MD3DarkTheme,
-  MD3LightTheme,
-  PaperProvider,
-} from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import TodoNavigationContainer from './src/navigation';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet} from "react-native";
+import {Button, PaperProvider } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TodoNavigationContainer from "./src/navigation";
+import { ThemeProvider,ThemeContext } from "./src/stores/store";
+import { useContext, useEffect, useState } from "react";
 export default function App() {
-  const colorScheme = useColorScheme();
-  const { theme } = useMaterial3Theme();
-
-  const paperTheme =
-    colorScheme === 'dark'
-      ? { ...MD3DarkTheme, colors: theme.dark }
-      : { ...MD3LightTheme, colors: theme.light };
-
   return (
-    <PaperProvider theme={paperTheme}>
-    <SafeAreaView style={styles.container}>
-    <StatusBar style="auto" />
-      <TodoNavigationContainer />
-    </SafeAreaView>
-    </PaperProvider>
+    <ThemeProvider>
+      <RootApplication />
+    </ThemeProvider>
   );
 }
-
+function RootApplication() {
+  const {paperTheme} = useContext(ThemeContext)
+  return (
+    <PaperProvider theme={paperTheme}>
+      <SafeAreaView
+        style={[styles.container,{backgroundColor:paperTheme.colors.background}]}
+      >
+        <StatusBar style="auto" />
+        <TodoNavigationContainer />
+      </SafeAreaView>
+    </PaperProvider>
+  )
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,

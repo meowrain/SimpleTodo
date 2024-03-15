@@ -8,14 +8,17 @@ import SettingsScreen from "../screens/settings-screen";
 import { Appbar } from "react-native-paper";
 import LoginScreen from "../screens/login-screen";
 import RegisterScreen from "../screens/register-screen";
-function CustomNavigationBar() {
-  return (
-    <Appbar.Header mode="center-aligned">
-      <Appbar.Content title="My awesome app" />
-    </Appbar.Header>
-  );
-}
+import { useContext } from "react";
+import { ThemeContext } from "../stores/store";
+// function CustomNavigationBar() {
+//   return (
+//     <Appbar.Header mode="center-aligned">
+//       <Appbar.Content title="My awesome app" />
+//     </Appbar.Header>
+//   );
+// }
 function Root() {
+  const {isDarkModeOn} = useContext(ThemeContext)
   const Tab = createMaterialBottomTabNavigator();
   return (
     <Tab.Navigator>
@@ -24,7 +27,7 @@ function Root() {
         component={HomeScreen}
         options={{
           headerShown: false,
-          tabBarIcon: () => <Entypo name="home" size={24} color="black" />,
+          tabBarIcon: () => <Entypo name="home" size={24} color={isDarkModeOn ? 'white' : 'black'} />,
         }}
       />
       <Tab.Screen
@@ -33,7 +36,7 @@ function Root() {
         options={{
           headerShown: false,
           tabBarIcon: () => (
-            <Ionicons name="settings" size={24} color="black" />
+            <Ionicons name="settings" size={24} color={isDarkModeOn ? 'white' : 'black'} />
           ),
         }}
       />
@@ -42,7 +45,7 @@ function Root() {
         component={UserScreen}
         options={{
           headerShown: false,
-          tabBarIcon: () => <FontAwesome name="user" size={24} color="black" />,
+          tabBarIcon: () => <FontAwesome name="user" size={24} color={isDarkModeOn ? 'white' : 'black'} />,
         }}
       />
     </Tab.Navigator>
