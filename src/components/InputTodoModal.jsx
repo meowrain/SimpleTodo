@@ -12,7 +12,7 @@ export default function InputTodo({ showModal, hideModal, visible ,addTodo}) {
   const handleAdd = () => {
     addTodo(todo); //将用户添加的待办事项传给addTodo函数
     setTodo(""); //重置输入框
-    // hideModal();
+    hideModal();
   };
   return (
     <Portal>

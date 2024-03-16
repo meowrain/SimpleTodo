@@ -1,7 +1,7 @@
 import React from "react";
 import { Portal, Text, Button, Dialog } from "react-native-paper";
 export default function DeleteTodo({ hideDialog, visible,onDelete }) {
-
+  const confirmDelete = ()=>{onDelete();hideDialog()}
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={hideDialog} >
@@ -11,7 +11,7 @@ export default function DeleteTodo({ hideDialog, visible,onDelete }) {
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={hideDialog}>取消</Button>
-          <Button onPress={onDelete}>确定</Button>
+          <Button onPress={confirmDelete}>确定</Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>
