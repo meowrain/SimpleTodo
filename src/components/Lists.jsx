@@ -51,7 +51,7 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo}) => {
                 ListHeaderComponent={<List.Section title="您的Todos"/>}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({item}) => (
-                    <Card onLongPress={()=>showPinDialog(item)}>
+                    <Card onLongPress={()=>showPinDialog(item)} style={styles.card}>
                         <Card.Content>
                             <List.Item title={item.task}/>
                         </Card.Content>
@@ -101,6 +101,9 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
+    card: {
+        marginBottom: 10,
+    }
 });
 
 export default withStorage(TodoLists);

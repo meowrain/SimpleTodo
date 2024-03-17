@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { useMaterial3Theme } from '@pchmn/expo-material3-theme';
 import { useColorScheme } from 'react-native';
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
+import {loadThemeState, saveThemeState} from "../utils/handleTheme";
 
 export const ThemeContext = createContext();
 
@@ -15,6 +16,12 @@ export const ThemeProvider = ({ children }) => {
   });
 
   useEffect(() => {
+    const loadIsDarkOn = async () => {
+      // console.log(isDarkModeOn)
+      const savedThemeState = await loadThemeState();
+      setIsDarkModeOn(savedThemeState);
+    };
+    loadIsDarkOn()
     const scheme = isDarkModeOn ? 'dark' : 'light';
     const baseTheme = isDarkModeOn ? MD3DarkTheme : MD3LightTheme;
 
@@ -23,7 +30,13 @@ export const ThemeProvider = ({ children }) => {
   }, [isDarkModeOn, theme]);
 
   const toggleTheme = () => {
-    setIsDarkModeOn(prevMode => !prevMode);
+    setIsDarkModeOn(prevMode => {
+      // 先切换模式
+      const newMode = !prevMode;
+      // 切换后保存新状态
+      saveThemeState(newMode);
+      return newMode; // 返回新状态以更新组件
+    });
   };
 
   return (
