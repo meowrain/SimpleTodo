@@ -39,6 +39,14 @@ const withStorage = (WrappedComponent) => {
       // 保存删除后的数据到本地存储
       saveTodos(todoWillDelete);
     };
+    // 置顶 Todo 项的逻辑
+    const pinTodo = (todo) => {
+      const newTodos = todos.filter((t) => t.id !== todo.id); // 先移除该 Todo
+      const updatedTodos = [todo, ...newTodos]; // 然后把它添加到数组的开头
+      setTodos(updatedTodos); // 更新状态
+      saveTodos(updatedTodos); // 这里保存到本地或者服务端
+    };
+
 
     return (
       <WrappedComponent
@@ -46,6 +54,7 @@ const withStorage = (WrappedComponent) => {
         addTodo={addTodo}
         updateTodo={updateTodo}
         deleteTodo={deleteTodo}
+        pinTodo={pinTodo}
         {...props}
       />
     );
