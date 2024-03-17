@@ -3,7 +3,7 @@ import { StyleSheet} from "react-native";
 import {Button, PaperProvider } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TodoNavigationContainer from "./src/navigation";
-import { ThemeProvider,ThemeContext } from "./src/stores/store";
+import { ThemeProvider,ThemeContext } from "./src/stores/themeContext";
 import { useContext, useEffect, useState } from "react";
 export default function App() {
   return (

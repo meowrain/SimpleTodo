@@ -9,7 +9,8 @@ import { Appbar } from "react-native-paper";
 import LoginScreen from "../screens/login-screen";
 import RegisterScreen from "../screens/register-screen";
 import { useContext } from "react";
-import { ThemeContext } from "../stores/store";
+import { ThemeContext } from "../stores/themeContext";
+import UserProfile from "../screens/user-screen/profile";
 // function CustomNavigationBar() {
 //   return (
 //     <Appbar.Header mode="center-aligned">
@@ -71,6 +72,9 @@ export default function TodoNavigationContainer({ children }) {
         <Stack.Screen name="Register" component={RegisterScreen} options={{
             headerShown: false
         }} />
+          <Stack.Screen name="UserProfile" component={UserProfile} options={{
+              headerShown: false
+          }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

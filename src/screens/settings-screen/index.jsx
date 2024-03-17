@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { List, Switch, Divider } from "react-native-paper";
 // import HelpScreen from "../help-screen";
-import { ThemeContext } from "../../stores/store";
+import { ThemeContext } from "../../stores/themeContext";
 export default function SettingsScreen() {
     const {isDarkModeOn,toggleTheme} = React.useContext(ThemeContext)
     

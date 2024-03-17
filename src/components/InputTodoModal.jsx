@@ -7,7 +7,7 @@ import {
     TextInput,
 } from "react-native-paper";
 import {StyleSheet} from "react-native";
-import {ThemeContext} from "../stores/store";
+import {ThemeContext} from "../stores/themeContext";
 
 
 export default function InputTodo({showModal, hideModal, visible, addTodo}) {
