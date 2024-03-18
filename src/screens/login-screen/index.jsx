@@ -2,6 +2,7 @@ import * as React from "react";
 import {View, StyleSheet} from "react-native";
 import {Button, Card, Divider, Text, TextInput, useTheme} from "react-native-paper";
 import {loginQuery} from "../../api/auth";
+import { saveLoginState } from "../../utils/handleLoginState";
 
 const LoginScreen = ({navigation}) => {
     const {colors} = useTheme();
@@ -24,6 +25,7 @@ const LoginScreen = ({navigation}) => {
       
         try {
           const res = await loginQuery(userData);
+          await saveLoginState(true)
           setErrorMessage("")
           navigation.goBack()
           console.log(res);

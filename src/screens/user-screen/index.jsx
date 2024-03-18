@@ -1,18 +1,41 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {View} from "react-native";
 import {Avatar, Caption, Text, Card, DataTable, Button, TouchableRipple} from "react-native-paper";
-import userImg from '../../../assets/user.svg'
+import { loadLoginState, saveLogoutState } from "../../utils/handleLoginState";
+import { getCurrentUser } from "../../api/user";
 
 const UserScreen = ({todo, navigation}) => {
+    const [userInfo,setUserInfo] = useState(null)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
-    // Temp user data
-    const user = isLoggedIn ? {
-        avatarUrl: 'https://meowrain.cn/upload/2024/02/photo_2024-02-24_23-24-42.jpg',
-        username: 'meowrain'
-    } : {
-        avatarUrl: 'https://img.ixintu.com/download/jpg/20200905/d286ad90987b5bba8d8aa9320ef5b991_512_512.jpg!con',
-        username: "未登陆",
-    };
+    useEffect(()=>{
+        const fetchData = async()=>{
+            try {
+                const loginState = await loadLoginState();
+                setIsLoggedIn(loginState)
+                if(loginState) {
+                    const user = await getCurrentUser()
+                    setUserInfo(user);
+                }
+            }catch(error) {
+                console.error("加载用户失败",error)
+            }
+        }
+        fetchData()
+        const willFocusSubscription = navigation.addListener('focus', () => {
+            fetchData();
+        });
+
+        return willFocusSubscription; 
+    },[]);
+    
+// Temp user data
+const user = isLoggedIn && userInfo ? {
+    avatarUrl: userInfo.avatar,
+    username: userInfo.username
+} : {
+    avatarUrl: 'https://img.ixintu.com/download/jpg/20200905/d286ad90987b5bba8d8aa9320ef5b991_512_512.jpg!con',
+    username: "未登陆",
+};
     const handleAvatarPress = () => {
         if (isLoggedIn) {
             // 如果用户已登录，导航到个人信息界面
@@ -49,7 +72,11 @@ const UserScreen = ({todo, navigation}) => {
             <Button
                 icon="plus"
                 mode="contained"
-                onPress={() => console.log("注销")}
+                onPress={async () => {
+                    await saveLogoutState();
+                    setIsLoggedIn(false);
+                    setUserInfo(null);
+                }}
             >
                 注销
             </Button>
