@@ -11,6 +11,7 @@ import RegisterScreen from "../screens/register-screen";
 import { useContext } from "react";
 import { ThemeContext } from "../stores/themeContext";
 import UserProfile from "../screens/user-screen/profile";
+import HelperScreenDetail from "../screens/help-screen/detail";
 // function CustomNavigationBar() {
 //   return (
 //     <Appbar.Header mode="center-aligned">
@@ -19,7 +20,7 @@ import UserProfile from "../screens/user-screen/profile";
 //   );
 // }
 function Root() {
-  const {isDarkModeOn} = useContext(ThemeContext)
+  const { isDarkModeOn } = useContext(ThemeContext)
   const Tab = createMaterialBottomTabNavigator();
   return (
     <Tab.Navigator>
@@ -65,16 +66,19 @@ export default function TodoNavigationContainer({ children }) {
           }}
         />
         <Stack.Screen name="Login" component={LoginScreen} options={
-            {
-                headerShown: false,
-            }
+          {
+            headerShown: false,
+          }
         } />
         <Stack.Screen name="Register" component={RegisterScreen} options={{
-            headerShown: false
+          headerShown: false
         }} />
-          <Stack.Screen name="UserProfile" component={UserProfile} options={{
-              headerShown: false
-          }} />
+        <Stack.Screen name="UserProfile" component={UserProfile} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="HelpScreen" component={HelperScreenDetail} options={{
+          headerShown: false
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

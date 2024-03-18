@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { List, Switch, Divider } from "react-native-paper";
 // import HelpScreen from "../help-screen";
 import { ThemeContext } from "../../stores/themeContext";
-export default function SettingsScreen() {
+export default function SettingsScreen({navigation}) {
     const {isDarkModeOn,toggleTheme} = React.useContext(ThemeContext)
     
   return (
@@ -27,7 +27,7 @@ export default function SettingsScreen() {
         <List.Item
           title="Help"
           left={(props) => <List.Icon {...props} icon="help-circle" />}
-          onPress={() => navigation.navigate("Help")}
+          onPress={() => navigation.navigate("HelpScreen")}
         />
       </List.Section>
       <Divider />
