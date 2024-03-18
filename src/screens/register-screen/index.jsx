@@ -1,21 +1,28 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Card, TextInput, useTheme } from "react-native-paper";
+import { Button, Card,Text, TextInput, useTheme } from "react-native-paper";
 import { registerQuery } from "../../api/auth";
 
-const RegisterScreen = ({navigation}) => {
+const RegisterScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
-    const handleRegister = ()=>{
-        const userData = {
-            username,
-            password
-        }
-        registerQuery(userData)
-        navigation.goBack()
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const handleRegister = async () => {
+    if (!username || !password) {
+      setErrorMessage("账户名和密码不为空！");
+      console.log("密码不为空！");
+      return;
     }
-
+    const userData = {
+      username,
+      password,
+    };
+    const res = await registerQuery(userData);
+    if (res) {
+      navigation.goBack();
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -35,6 +42,7 @@ const RegisterScreen = ({navigation}) => {
             theme={{ colors: { primary: colors.primary } }}
             onChangeText={(password) => setPassword(password)}
           />
+          {errorMessage && <Text style={{ color: "red" }}>{errorMessage}</Text>}
         </Card.Content>
         <Card.Actions>
           <Button

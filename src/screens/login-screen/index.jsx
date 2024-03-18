@@ -8,21 +8,33 @@ const LoginScreen = ({navigation}) => {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState('');
-    const handleLogin = () => {
-        if(!username || !password) {
-            setErrorMessage("账户名和密码不为空！")
-            console.log("密码不为空！")
-            return
+
+    
+    const handleLogin = async () => {
+        if (!username || !password) {
+          setErrorMessage("账户名和密码不为空！");
+          console.log("密码不为空！");
+          return;
         }
+      
         const userData = {
-            username,
-            password
+          username,
+          password,
+        };
+      
+        try {
+          const res = await loginQuery(userData);
+          setErrorMessage("")
+          navigation.goBack()
+          console.log(res);
+          // 执行其他操作,例如导航到主页面
+          // navigation.replace("Home");
+        } catch (error) {
+          console.error("登录失败:", error);
+          setErrorMessage("登录失败,请稍后重试");
         }
-        loginQuery(userData)
-        navigation.goBack()
-        // 在这里执行登录逻辑
-        // console.log("登录信息", { username, password });
-    };
+      };
+
 
     return (
         <View style={[styles.container, {backgroundColor: colors.background}]}>
