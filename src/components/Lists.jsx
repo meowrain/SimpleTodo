@@ -8,7 +8,7 @@ import UpdateTodo from "./UpdateTodoModal";
 import withStorage from "../hoc/withStorage";
 import PinTodoModal from "./PinTodoModal";
 
-const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo}) => {
+const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) => {
 
     //添加部分
     const [addModalVisible, setAddModalVisible] = useState(false);
@@ -53,10 +53,10 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo}) => {
                 renderItem={({item}) => (
                     <Card onLongPress={()=>showPinDialog(item)} style={styles.card}>
                         <Card.Content>
-                            <List.Item title={item.task}/>
+                            <List.Item title={item.content}/>
                         </Card.Content>
                         <Card.Actions>
-                            <Button onPress={() => showUpdateModal(item.task)}>修改</Button>
+                            <Button onPress={() => showUpdateModal(item.content)}>修改</Button>
                             <Button onPress={() => showDeleteDialog(item.id)}>删除</Button>
                         </Card.Actions>
                     </Card>
@@ -85,8 +85,11 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo}) => {
                 onPin={pinTodo}
                 todoToPin={todoToPin}
             />
+            {/*<Button onPress={async()=>{await clearTodos()}}>删除</Button>*/}
+
             <Portal.Host>
                 <FAB style={styles.fab} icon="plus" onPress={showAddModal}/>
+                <FAB style={styles.reload} icon="reload" onPress={reloadPage}/>
             </Portal.Host>
         </View>
     );
@@ -101,8 +104,16 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
+    reload:{
+        position: "absolute",
+        margin: 16,
+        right: 0,
+        bottom: 100,
+    },
     card: {
         marginBottom: 10,
+        marginLeft: 13,
+        marginRight: 13
     }
 });
 
