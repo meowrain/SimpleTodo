@@ -25,7 +25,7 @@ function Root() {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Home"
+        name="主页"
         component={HomeScreen}
         options={{
           headerShown: false,
@@ -33,7 +33,7 @@ function Root() {
         }}
       />
       <Tab.Screen
-        name="Settings"
+        name="设置"
         component={SettingsScreen}
         options={{
           headerShown: false,
@@ -43,7 +43,7 @@ function Root() {
         }}
       />
       <Tab.Screen
-        name="User"
+        name="我的"
         component={UserScreen}
         options={{
           headerShown: false,
