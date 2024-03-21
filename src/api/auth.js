@@ -1,5 +1,5 @@
 import { saveJwt, loadJwt } from "../utils/handleJwt";
-const url = "192.168.4.138:8090";
+import {API_URL} from '@env'
 /**
  *
  * @param {Object} userData
@@ -9,7 +9,7 @@ const url = "192.168.4.138:8090";
  */
 async function registerQuery(userData) {
   try {
-    const response = await fetch(`http://${url}/users/register`, {
+    const response = await fetch(`${API_URL}/users/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +19,6 @@ async function registerQuery(userData) {
     const resJson = await response.json();
     if (resJson.msg === "success") {
       console.log("注册成功！");
-      return true
     }
   } catch (error) {
     throw error; // 重新抛出错误以便被捕获
@@ -35,7 +34,7 @@ async function registerQuery(userData) {
  */
 async function loginQuery(userData) {
   try {
-    const response = await fetch(`http://${url}/users/login`, {
+    const response = await fetch(`${API_URL}/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

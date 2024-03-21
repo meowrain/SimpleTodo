@@ -11,6 +11,9 @@ const saveJwt = async(jwtToken)=>{
     }
 }
 
+/**
+* @return {Promise<string>}
+* */
 const loadJwt = async()=>{
     try{
        const jwtToken = await storage.load({key:"jwtToken"});
