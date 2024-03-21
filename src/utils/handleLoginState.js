@@ -16,6 +16,7 @@ const saveLogoutState = async()=>{
             key:"loginState",
             data: false
         })
+        await storage.remove({key:"jwtToken"})
     }catch(err) {
         console.error("保存登出状态失败",err)
     }
