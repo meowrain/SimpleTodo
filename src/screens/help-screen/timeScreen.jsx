@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet,TouchableOpacity} from "react-native";
 import { Divider,useTheme} from "react-native-paper";
+import useStyles from "./pageStyle";
 
-export default function timeScreen() {
+export default function TimeScreen() {
 
   const { colors } = useTheme();
 
     const [helpfulClicked, setHelpfulClicked] = useState(false);
     const [notHelpfulClicked, setNotHelpfulClicked] = useState(false);
-    
+
     const handleHelpfulClick = () => {
       setHelpfulClicked(true);
 
@@ -28,7 +29,7 @@ export default function timeScreen() {
       // 也可以将反馈信息保存在本地或数据库中
       console.log("用户反馈：", helpful ? "有帮助" : "没帮助", feedbackText);
    };
-  
+    const styles = useStyles()
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Text style={styles.title}>如何为行程设置提醒时间？</Text>
@@ -58,48 +59,3 @@ export default function timeScreen() {
     )
  }
 
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        paddingHorizontal: 20,
-    },
-    title: {
-        fontSize: 40,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        marginTop: 20,
-    },
-    step:{
-      fontSize: 20,
-      marginBottom: 20,
-      marginTop: 20,
-      
-    },
-    note: {
-        fontSize: 15,
-        fontStyle: 'italic',
-        marginTop: 150,
-        flex: 1, 
-        paddingHorizontal: 20,
-        textAlign: 'center',
-        
-    },
-    button: {
-    width: 100, 
-    height: 40,
-    borderRadius: 30,
-    backgroundColor: 'lightblue',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 200,
-    },
-    buttonText: {
-      color: 'black',
-      fontSize: 16,
-    },
-    buttonClicked: {
-      backgroundColor:'blue',
-    },
-});
