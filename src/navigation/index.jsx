@@ -11,11 +11,11 @@ import RegisterScreen from "../screens/register-screen";
 import { useContext } from "react";
 import { ThemeContext } from "../stores/themeContext";
 import UserProfile from "../screens/user-screen/profile";
-import HelperScreenDetail from "../screens/help-screen/detail";
-import addScreen from "../screens/help-screen/addScreen";
-import upScreen from "../screens/help-screen/upScreen";
-import deleteScreen from "../screens/help-screen/deleteScreen";
-import timeScreen from "../screens/help-screen/timeScreen";
+import HelperScreenDetail from "../screens/help-screen/DetailScreen";
+import AddScreen from "../screens/help-screen/AddScreen";
+import UpScreen from "../screens/help-screen/UpScreen";
+import DeleteScreen from "../screens/help-screen/DeleteScreen";
+import TimeScreen from "../screens/help-screen/TimeScreen";
 // function CustomNavigationBar() {
 //   return (
 //     <Appbar.Header mode="center-aligned">
@@ -83,16 +83,16 @@ export default function TodoNavigationContainer({ children }) {
         <Stack.Screen name="HelpScreen" component={HelperScreenDetail} options={{
           headerShown: false
         }} />
-        <Stack.Screen name="addScreen" component={addScreen} options={{
+        <Stack.Screen name="addScreen" component={AddScreen} options={{
           headerShown: false
         }} />
-        <Stack.Screen name="upScreen" component={upScreen} options={{
+        <Stack.Screen name="upScreen" component={UpScreen} options={{
           headerShown: false
         }} />
-        <Stack.Screen name="deleteScreen" component={deleteScreen} options={{
+        <Stack.Screen name="deleteScreen" component={DeleteScreen} options={{
           headerShown: false
         }} />
-        <Stack.Screen name="timeScreen" component={timeScreen} options={{
+        <Stack.Screen name="timeScreen" component={TimeScreen} options={{
           headerShown: false
         }} />
       </Stack.Navigator>

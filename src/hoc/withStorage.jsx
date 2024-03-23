@@ -53,9 +53,9 @@ const withStorage = (WrappedComponent) => {
         }, [props.navigation]);
         useEffect(() => {
             if (loginStatus) {
-                try{
+                try {
                     mergeTodosOnLogin();
-                }catch (err) {
+                } catch (err) {
                     console.error(err)
                 }
             }
@@ -228,25 +228,25 @@ const withStorage = (WrappedComponent) => {
                 console.error('Failed to handle logout', error);
             }
         };
-        const reloadPage = async()=>{
-            if(!loginStatus) {
-                try{
+        const reloadPage = async () => {
+            if (!loginStatus) {
+                try {
                     const todosFromStorage = await loadTodosFromStorage()
                     setTodos(todosFromStorage)
-                }catch (err) {
+                } catch (err) {
                     console.error(err)
                 }
-            }else {
-                    const userInfo = await getCurrentUser();
-                    setUserID(userInfo.ID);
-                    const todosFromDB = await getTodos();
-                    const todos = todosFromDB.map(item => ({
-                        userID: item.userID,
-                        content: item.content,
-                        status: item.status,
-                        id: item.ID,
-                    }));
-                    setTodos(todos);
+            } else {
+                const userInfo = await getCurrentUser();
+                setUserID(userInfo.ID);
+                const todosFromDB = await getTodos();
+                const todos = todosFromDB.map(item => ({
+                    userID: item.userID,
+                    content: item.content,
+                    status: item.status,
+                    id: item.ID,
+                }));
+                setTodos(todos);
             }
         }
 
