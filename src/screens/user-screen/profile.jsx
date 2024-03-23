@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, Button } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar, Caption } from "react-native-paper";
-import { getCurrentUser } from "../../api/user"; // 设置获取用户信息的 API
-
+import * as ImagePicker from "expo-image-picker";
+import { getCurrentUser } from "../../api/user";
 
 const UserProfile = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState(null);
@@ -11,34 +11,86 @@ const UserProfile = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await getCurrentUser(); // 获取用户信息，根据实际情况修改
+        const user = await getCurrentUser();
         setUserInfo(user);
-        setAvatarUrl(user.avatarUrl); // 从用户信息中获取头像链接
+        setAvatarUrl(user.avatarUrl);
       } catch (error) {
         console.error("加载用户信息失败", error);
       }
-    }
+    };
     fetchData();
   }, []);
 
   const handleUploadAvatar = async () => {
-    // 实现上传头像功能
-    const newAvatarUrl = await uploadAvatar(); // 调用上传头像的 API
-    setAvatarUrl(newAvatarUrl); // 更新头像链接
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setAvatarUrl(result.uri);
+      // 调用上传图片的 API 将图片上传到服务器
+      // const newAvatarUrl = await uploadAvatar(result.uri);
+      // setAvatarUrl(newAvatarUrl);
+    }
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Avatar.Image size={100} source={{ uri: avatarUrl }} />
-      <Button title="上传头像" onPress={handleUploadAvatar} />
-      {userInfo && (
-        <View>
-          <Text>{userInfo.username}</Text>
-          <Caption>@{userInfo.username}</Caption>
-        </View>
-      )}
-    </View>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={handleUploadAvatar}>
+          <Avatar.Image size={100} source={{ uri: avatarUrl }} style={styles.avatar} />
+        </TouchableOpacity>
+        {userInfo && (
+            <View style={styles.userInfo}>
+              <Text style={styles.username}>{userInfo.username}</Text>
+              <Caption>@{userInfo.username}</Caption>
+              <View style={styles.personalInfo}>
+                {/* 你可以在这里添加更多的个人信息 */}
+              </View>
+            </View>
+        )}
+      </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+  avatar: {
+    marginBottom: 20,
+  },
+  userInfo: {
+    alignItems: "center",
+  },
+  username: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  personalInfo: {
+    marginTop: 20,
+  },
+  infoLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  infoValue: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+});
 
 export default UserProfile;
