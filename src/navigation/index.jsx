@@ -12,6 +12,10 @@ import { useContext } from "react";
 import { ThemeContext } from "../stores/themeContext";
 import UserProfile from "../screens/user-screen/profile";
 import HelperScreenDetail from "../screens/help-screen/detail";
+import addScreen from "../screens/help-screen/addScreen";
+import upScreen from "../screens/help-screen/upScreen";
+import deleteScreen from "../screens/help-screen/deleteScreen";
+import timeScreen from "../screens/help-screen/timeScreen";
 // function CustomNavigationBar() {
 //   return (
 //     <Appbar.Header mode="center-aligned">
@@ -77,6 +81,18 @@ export default function TodoNavigationContainer({ children }) {
           headerShown: false
         }} />
         <Stack.Screen name="HelpScreen" component={HelperScreenDetail} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="addScreen" component={addScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="upScreen" component={upScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="deleteScreen" component={deleteScreen} options={{
+          headerShown: false
+        }} />
+        <Stack.Screen name="timeScreen" component={timeScreen} options={{
           headerShown: false
         }} />
       </Stack.Navigator>
