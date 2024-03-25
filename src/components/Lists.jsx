@@ -7,6 +7,7 @@ import DeleteTodo from "./DeleteTodoModal";
 import UpdateTodo from "./UpdateTodoModal";
 import withStorage from "../hoc/withStorage";
 import PinTodoModal from "./PinTodoModal";
+import TimeTodoModal from "./TimeTodoModal";
 
 const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) => {
 
@@ -43,7 +44,11 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) 
     }
     const hidePinDialog = () => setPinDialogVisible(false)
 
-
+    //提醒部分
+    const [timeModalVisible, setTimeModalVisible] = useState(false);
+    const showTimeDialog = () => setTimeModalVisible(true);
+    const hideTimeDialog = () => setTimeModalVisible(false);
+    
     return (
         <View style={styles.container}>
             <FlatList
@@ -58,6 +63,7 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) 
                         <Card.Actions>
                             <Button onPress={() => showUpdateModal(item.content)}>修改</Button>
                             <Button onPress={() => showDeleteDialog(item.id)}>删除</Button>
+                            <Button onPress={() => showTimeDialog(item.content)}>设置提醒</Button>
                         </Card.Actions>
                     </Card>
                 )}
@@ -86,7 +92,11 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) 
                 todoToPin={todoToPin}
             />
             {/*<Button onPress={async()=>{await clearTodos()}}>删除</Button>*/}
-
+            <TimeTodoModal
+                visible={timeModalVisible}
+                hideDialog={hideTimeDialog}
+                showDialog={showTimeDialog}
+            />
             <Portal.Host>
                 <FAB style={styles.fab} icon="plus" onPress={showAddModal}/>
                 <FAB style={styles.reload} icon="reload" onPress={reloadPage}/>
@@ -94,6 +104,7 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) 
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
