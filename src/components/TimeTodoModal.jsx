@@ -1,40 +1,43 @@
 import React, { useState } from "react";
 import { Modal, Portal, Text, Button, TextInput } from "react-native-paper";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform, Alert } from "react-native";
 import { ThemeContext } from "../stores/themeContext";
-import { Platform, Vibration, Alert } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import * as Calendar from "expo-calendar";
 
-export default function SetReminder({ hideModal, visible, setReminder }) {
+export default function SetReminder({ hideDialog, visible }) {
   const themeContext = React.useContext(ThemeContext);
   const [reminderTime, setReminderTime] = useState(null);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  const handleSetReminder = () => {
+  const handleSetReminder = async () => {
     if (reminderTime) {
-      setReminderTime(reminderTime);
-      scheduleNotification();
-      hideModal();
-      Alert.alert('提醒设置成功', '您的提醒已成功设置！');
+      try {
+        await scheduleNotification();
+        hideDialog();
+        Alert.alert("提醒设置成功", "您的提醒已成功设置！");
+      } catch (error) {
+        console.error(error);
+        Alert.alert("提醒设置失败", "无法创建提醒事件");
+      }
     } else {
-      Alert.alert('提醒设置失败', '请先选择提醒时间。');
+      Alert.alert("提醒设置失败", "请先选择提醒时间。");
     }
   };
+  async function getDefaultCalendarSource() {
+    const defaultCalendar = await Calendar.getDefaultCalendarAsync();
+    return defaultCalendar.source;
+  }
+  const scheduleNotification = async () => {
+    if (!reminderTime) {
+      Alert.alert("提醒设置失败", "提醒时间不能为空");
+      return;
+    }
 
-  const scheduleNotification = () => {
-    if (reminderTime) {
-      const now = new Date();
-      const scheduledTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), reminderTime.getHours(), reminderTime.getMinutes(), 0, 0);
-
-        if (scheduledTime) {
-          const AlarmManager = require('react-native').NativeModules.AlarmManagerAndroid;
-          AlarmManager.setAlarm(scheduledTime.getTime());
-        } else {
-          console.log("提醒时间不能为空");
-          // 进行错误处理或设置默认值
-        }
-
-      Vibration.vibrate([1000, 500, 1000]);
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("提醒设置失败", "需要日历权限才能设置提醒");
+      return;
     }
   };
 
@@ -51,12 +54,10 @@ export default function SetReminder({ hideModal, visible, setReminder }) {
     hideDateTimePicker();
   };
 
-
   const handleClearReminder = () => {
     setReminderTime(null);
   };
 
-  
   const styles = StyleSheet.create({
     containerStyle: {
       backgroundColor: themeContext.paperTheme.colors.background,
@@ -73,14 +74,14 @@ export default function SetReminder({ hideModal, visible, setReminder }) {
     <Portal>
       <Modal
         visible={visible}
-        onDismiss={hideModal}
+        onDismiss={hideDialog}
         contentContainerStyle={styles.containerStyle}
         theme={themeContext.paperTheme}
       >
         <Text>设置提醒时间</Text>
         <TextInput
           label="提醒时间"
-          value={reminderTime ? reminderTime.toLocaleString() : ''}
+          value={reminderTime ? reminderTime.toLocaleString() : ""}
           onTouchStart={showDateTimePicker}
         />
         <DateTimePickerModal
@@ -108,4 +109,4 @@ export default function SetReminder({ hideModal, visible, setReminder }) {
       </Modal>
     </Portal>
   );
-};
+}
