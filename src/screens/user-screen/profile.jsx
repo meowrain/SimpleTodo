@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Avatar, Caption } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { getCurrentUser } from "../../api/user";
-
+import { UploadImage } from "../../api/user";
 const UserProfile = ({ navigation }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -13,7 +13,7 @@ const UserProfile = ({ navigation }) => {
       try {
         const user = await getCurrentUser();
         setUserInfo(user);
-        setAvatarUrl(user.avatarUrl);
+        setAvatarUrl(`${user.avatar}?${Date.now()}`);
       } catch (error) {
         console.error("加载用户信息失败", error);
       }
@@ -34,12 +34,13 @@ const UserProfile = ({ navigation }) => {
       aspect: [1, 1],
       quality: 1,
     });
-
-    if (!result.cancelled) {
-      setAvatarUrl(result.uri);
+  
+    if (!result.canceled) {
       // 调用上传图片的 API 将图片上传到服务器
-      // const newAvatarUrl = await uploadAvatar(result.uri);
-      // setAvatarUrl(newAvatarUrl);
+      uri = result.assets[0].uri
+      mimeType = result.assets[0].mimeType
+      const newAvatarUrl = await UploadImage(uri,mimeType);
+      setAvatarUrl(`${newAvatarUrl}?${Date.now()}`);
     }
   };
 

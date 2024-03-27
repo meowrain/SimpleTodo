@@ -31,4 +31,33 @@ async function getCurrentUser() {
     throw new Error(error);
   }
 }
-export {getCurrentUser}
+async function UploadImage(imageUri,mimeType) {
+  try {
+    const fileExtension = mimeType.split('/')[1]; 
+    const jwtToken = await loadJwt();
+    const formData = new FormData()
+    const timestamp = Date.now();
+    const uniqueFileName = `avatar-${timestamp}.${fileExtension}`;
+    formData.append('avatar',{
+      uri: imageUri,
+      type: mimeType,
+      name: uniqueFileName
+    })
+    const headers = {"Authorization": jwtToken,"Content-Type":"multipart/form-data"};
+    const response = await fetch(`${API_URL}/users/upload_avatar`,{
+      method: 'POST',
+      headers: headers,
+      body: formData
+    });
+    const resJson = await response.json(); // 获取响应数据
+    if (response.ok) {
+      return resJson.data.avatar;
+    } else {
+      throw new Error(resJson.error || 'Error uploading image');
+    }
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+export {getCurrentUser,UploadImage}

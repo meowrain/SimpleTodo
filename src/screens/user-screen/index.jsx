@@ -33,7 +33,7 @@ const UserScreen = ({logoutHandler, navigation}) => {
 
 // Temp user data
     const user = isLoggedIn && userInfo ? {
-        avatarUrl: userInfo.avatar,
+        avatarUrl: `${userInfo.avatar}?${Date.now()}`,
         username: userInfo.username
     } : {
         avatarUrl: 'https://img.ixintu.com/download/jpg/20200905/d286ad90987b5bba8d8aa9320ef5b991_512_512.jpg!con',
