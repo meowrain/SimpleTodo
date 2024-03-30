@@ -3450,7 +3450,7 @@ expo-status-bar@~1.11.1:
 
 expo@^50.0.14:
   version "50.0.14"
-  resolved "https://registry.npmmirror.com/expo/-/expo-50.0.14.tgz"
+  resolved "https://registry.npmmirror.com/expo/-/expo-50.0.14.tgz#ddcae86aa0ba8d1be3da9ad1bdda23fa539dc97d"
   integrity sha512-yLPdxCMVAbmeEIpzzyAuJ79wvr6ToDDtQmuLDMAgWtjqP8x3CGddXxUe07PpKEQgzwJabdHvCLP5Bv94wMFIjQ==
   dependencies:
     "@babel/runtime" "^7.20.0"
