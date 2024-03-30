@@ -16,7 +16,7 @@ export default function HelperScreenDetail({navigation}) {
             <Divider/>
             <List.Section>
                 <List.Item
-                    title="如何添加行程？"
+                    title="如何添加todo？"
                     left={(props) => <List.Icon {...props} icon="help-circle"/>}
                     onPress={() => navigation.navigate("addScreen")}
                 />
@@ -25,7 +25,7 @@ export default function HelperScreenDetail({navigation}) {
 
             <List.Section>
                 <List.Item
-                    title="如何顶置行程？"
+                    title="如何顶置todo？"
                     left={(props) => <List.Icon {...props} icon="help-circle"/>}
                     onPress={() => navigation.navigate("upScreen")}
                 />
@@ -34,7 +34,7 @@ export default function HelperScreenDetail({navigation}) {
 
             <List.Section>
                 <List.Item
-                    title="如何为行程设置提醒时间？"
+                    title="如何为todo设置提醒时间？"
                     left={(props) => <List.Icon {...props} icon="help-circle"/>}
                     onPress={() => navigation.navigate("timeScreen")}
                 />
@@ -43,7 +43,7 @@ export default function HelperScreenDetail({navigation}) {
 
             <List.Section>
                 <List.Item
-                    title="如何一键删除行程"
+                    title="如何一键删除todo?"
                     left={(props) => <List.Icon {...props} icon="help-circle"/>}
                     onPress={() => navigation.navigate("deleteScreen")}
                 />

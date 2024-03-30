@@ -34,7 +34,7 @@ export default function AddScreen() {
 
     return (
         <View style={[styles.container, {backgroundColor: colors.background}]}>
-            <Text style={styles.title}>如何添加行程？</Text>
+            <Text style={styles.title}>如何添加todo？</Text>
             <Divider/>
             <Text style={styles.step}>1. 点击+号创建一个新的todo</Text>
             <Text style={styles.step}>2. 在新建的todo里输入你计划的行程</Text>
