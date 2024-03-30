@@ -15,32 +15,38 @@ async function getTodos() {
         throw new Error(error)
     }
 }
-
 /**
- * @function
- * @param {Object} todo
- * @param {string} todo.content - todo内容
- * @param {string} todo.tag - todo tag
- * @param {uint} todo.userID - todo对应的userID
- * @param {uint} todo.status - todo状态
- * @returns  {Promise<void>}
- * */
+ * 向后端添加一个新的待办事项
+ * @param {Object} todo - 待添加的待办事项对象
+ * @param {string} todo.content - 待办事项内容
+ * @param {string} todo.tag - 待办事项标签
+ * @param {number} todo.userID - 待办事项所属用户ID
+ * @param {number} todo.status - 待办事项状态
+ * @returns {Promise<Object|Error>} 返回新添加的待办事项对象或抛出错误
+ */
 async function addTodoBackend(todo) {
     try {
         const jwtToken = await loadJwt();
-        const headers = {'Authorization': jwtToken, "Content-Type": "application/json"}
+        const headers = { 'Authorization': jwtToken, "Content-Type": "application/json" };
         const response = await fetch(`${API_URL}/todos/add`, {
             method: "POST",
             headers: headers,
             body: JSON.stringify(todo)
-        })
-        /** @type {{code: number, data: Object,msg: string}} */
-        const resJson = await response.json()
-        if (resJson.msg === "Add success!") {
-            console.log("添加成功！")
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            if (responseData.msg === "Add success!") {
+                console.log("添加成功！");
+                return responseData.data;
+            } else {
+                throw new Error(`添加待办事项失败: ${responseData.msg}`);
+            }
+        } else {
+            throw new Error(`添加待办事项失败: ${response.status} ${response.statusText}`);
         }
     } catch (err) {
-        throw new Error(err)
+        throw new Error(`添加待办事项时出现错误: ${err.message}`);
     }
 }
 

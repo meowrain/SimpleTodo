@@ -1,9 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import storage from "../stores/storage";
-import {addTodoBackend, deleteTodoFromBackend, getTodos, updateTodoFromBackend} from "../api/todo";
-import {getCurrentUser} from "../api/user";
-import {loadLoginState} from "../utils/handleLoginState";
-
+import { addTodoBackend, deleteTodoFromBackend, getTodos, updateTodoFromBackend } from "../api/todo";
+import { getCurrentUser } from "../api/user";
+import { loadLoginState } from "../utils/handleLoginState";
 const withStorage = (WrappedComponent) => {
     const WithStorageComponent = (props) => {
         const [todos, setTodos] = useState([]);
@@ -16,13 +15,14 @@ const withStorage = (WrappedComponent) => {
                     const loginState = await loadLoginState();
                     if (loginState) {
                         const userInfo = await getCurrentUser();
+                        // console.log(userInfo)
                         setUserID(userInfo.ID);
                         const todosFromDB = await getTodos();
                         const todos = todosFromDB.map(item => ({
+                            id: item.ID,    // 添加这一行
                             userID: item.userID,
                             content: item.content,
                             status: item.status,
-                            id: item.ID,
                         }));
                         setTodos(todos);
                     } else {
@@ -51,15 +51,15 @@ const withStorage = (WrappedComponent) => {
             const unsubscribe = props.navigation.addListener('focus', loadData);
             return () => unsubscribe;
         }, [props.navigation]);
-        useEffect(() => {
-            if (loginStatus) {
-                try {
-                    mergeTodosOnLogin();
-                } catch (err) {
-                    console.error(err)
-                }
-            }
-        }, [loginStatus]);
+        // useEffect(() => {
+        //     if (loginStatus) {
+        //         try {
+        //             mergeTodosOnLogin();
+        //         } catch (err) {
+        //             console.error(err)
+        //         }
+        //     }
+        // }, [loginStatus]);
         const fetchTodos = async () => {
             try {
                 const todosFromDB = await getTodos();
@@ -78,8 +78,8 @@ const withStorage = (WrappedComponent) => {
         useEffect(() => {
             const cleanupStorage = async () => {
                 try {
-                    await storage.remove({key: "todos"});
-                    await storage.remove({key: "tempTodos"});
+                    await storage.remove({ key: "todos" });
+                    await storage.remove({ key: "tempTodos" });
                     // 如果需要,可以移除其他存储的数据
                 } catch (error) {
                     console.error("Failed to clean up storage", error);
@@ -89,22 +89,41 @@ const withStorage = (WrappedComponent) => {
         }, []);
         const addTodo = async (task) => {
             const newTodo = {
-                id: todos.length ? todos[todos.length - 1].id + 1 : 1,
+                id: null,
                 content: task,
                 userID,
-                status: 0, // Set default status to 0 (uint)
-                tag: '' // 添加一个空字符串作为 tag 属性的默认值
+                status: 0,
+                tag: ''
             };
-            const newTodos = [...todos, newTodo];
-            setTodos(newTodos);
-            await saveTodos(newTodos);
+
             if (loginStatus) {
-                await addTodoBackend(newTodo);
+                try {
+                    // 后端处理新待办事项并且返回包含新id的待办事项
+                    const addedTodo = await addTodoBackend(newTodo);
+                    // 确保后端返回了有效的 addedTodo 对象
+                    if (addedTodo && addedTodo.ID) {
+                        // 更新前端的待办事项
+                        newTodo.id = addedTodo.ID;
+                        const newTodos = [...todos, newTodo];
+                        setTodos(newTodos);
+                        await saveTodos(newTodos);
+                    } else {
+                        console.error('Failed to add todo, invalid response from backend');
+                    }
+                } catch (err) {
+                    console.error("Failed to add todo", err);
+                }
+            } else {
+                newTodo.id = todos.length ? todos[todos.length - 1].id + 1 : 1;
+                const newTodos = [...todos, newTodo];
+                setTodos(newTodos);
+                await saveTodos(newTodos);
             }
         };
+
         const updateTodo = async (newContent, oldContent) => {
             const updatedTodos = todos.map(todo =>
-                todo.content === oldContent ? {...todo, content: newContent} : todo
+                todo.content === oldContent ? { ...todo, content: newContent } : todo
             );
             setTodos(updatedTodos);
             await saveTodos(updatedTodos);
@@ -113,7 +132,7 @@ const withStorage = (WrappedComponent) => {
                 // 找到要更新的 todo 的 id
                 const todoToUpdate = updatedTodos.find(todo => todo.content === newContent);
                 if (todoToUpdate) {
-                    await updateTodoFromBackend(todoToUpdate.id, {content: newContent});
+                    await updateTodoFromBackend(todoToUpdate.id, { content: newContent });
                 } else {
                     console.error('未找到要更新的todo');
                 }
@@ -148,7 +167,7 @@ const withStorage = (WrappedComponent) => {
 
         const loadTodosFromStorage = async () => {
             try {
-                const savedTodos = await storage.load({key: 'todos'});
+                const savedTodos = await storage.load({ key: 'todos' });
                 return savedTodos || [];
             } catch (error) {
                 if (error.name === 'NotFoundError') {
@@ -163,7 +182,7 @@ const withStorage = (WrappedComponent) => {
 
         const clearTodos = async () => {
             try {
-                await storage.remove({key: "todos"});
+                await storage.remove({ key: "todos" });
                 setTodos([]); // 重置 todos 状态为空数组
             } catch (error) {
                 console.error("Failed to clear todos", error);
@@ -184,7 +203,7 @@ const withStorage = (WrappedComponent) => {
                     await Promise.all(mergedTodos.map(async todo => {
                         await addTodoBackend(todo);
                     }));
-                    await storage.remove({key: 'tempTodos'}); // 清空临时保存的待办事项
+                    await storage.remove({ key: 'tempTodos' }); // 清空临时保存的待办事项
                 } else if (savedTodos.length > 0) {
                     // 如果没有临时待办事项,但有之前保存的待办事项,则合并之前的待办事项
                     await clearTodos(); // 清空之前的待办事项列表
@@ -205,7 +224,7 @@ const withStorage = (WrappedComponent) => {
         };
         const loadTempTodosFromStorage = async () => {
             try {
-                const tempTodos = await storage.load({key: 'tempTodos'});
+                const tempTodos = await storage.load({ key: 'tempTodos' });
                 console.log(tempTodos)
                 return tempTodos || null;
             } catch (error) {
