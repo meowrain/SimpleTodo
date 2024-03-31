@@ -5,7 +5,7 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import TodoNavigationContainer from "./src/navigation";
 import {ThemeProvider, ThemeContext} from "./src/stores/themeContext";
 import {useContext, useEffect, useState} from "react";
-
+import { RootSiblingParent } from 'react-native-root-siblings';
 export default function App() {
     return (
         <ThemeProvider>
@@ -15,14 +15,16 @@ export default function App() {
 }
 
 function RootApplication() {
-    const {paperTheme} = useContext(ThemeContext)
+    const {isDarkModeOn,paperTheme} = useContext(ThemeContext)
     return (
         <PaperProvider theme={paperTheme}>
             <SafeAreaView
                 style={[styles.container, {backgroundColor: paperTheme.colors.background}]}
             >
-                <StatusBar style="auto"/>
+                <StatusBar style={isDarkModeOn? 'light':'dark'} />
+                <RootSiblingParent>
                 <TodoNavigationContainer/>
+                </RootSiblingParent>
             </SafeAreaView>
         </PaperProvider>
     )
