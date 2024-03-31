@@ -1,6 +1,6 @@
-import React, {useState} from "react";
-import {FlatList, StyleSheet, View} from "react-native";
-import {List, FAB, Portal, Card, Button} from "react-native-paper";
+import React, { useState, useContext } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+import { List, FAB, Portal, Card, Button, Text } from "react-native-paper";
 // import todosData from "../stores/todos.json"; //测试数据
 import InputTodo from "./InputTodoModal";
 import DeleteTodo from "./DeleteTodoModal";
@@ -8,8 +8,9 @@ import UpdateTodo from "./UpdateTodoModal";
 import withStorage from "../hoc/withStorage";
 import PinTodoModal from "./PinTodoModal";
 import TimeTodoModal from "./TimeTodoModal";
-
-const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) => {
+import { AntDesign } from '@expo/vector-icons';
+import { ThemeContext } from "../stores/themeContext";
+const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage }) => {
 
     //添加部分
     const [addModalVisible, setAddModalVisible] = useState(false);
@@ -46,19 +47,29 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) 
 
     //提醒部分
     const [timeModalVisible, setTimeModalVisible] = useState(false);
-    const showTimeDialog = () => setTimeModalVisible(true);
+    const [todoToSetReminder, setTodoToSetReminder] = useState('');
+    const showTimeDialog = (content) => {
+        setTodoToSetReminder(content);
+        setTimeModalVisible(true);
+    }
     const hideTimeDialog = () => setTimeModalVisible(false);
-    
+
+    //处理头顶标题样式
+    const { isDarkModeOn, toggleTheme } = useContext(ThemeContext)
     return (
         <View style={styles.container}>
             <FlatList
                 data={todos}
-                ListHeaderComponent={<List.Section title="您的Todos"/>}
+                ListHeaderComponent={<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}><AntDesign name="checkcircleo" size={22} color={isDarkModeOn ? 'white' : 'black'} /><List.Section title="Todo App" titleStyle={{ fontSize: 18 }}></List.Section></View>}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({item}) => (
-                    <Card onLongPress={()=>showPinDialog(item)} style={styles.card}>
+                renderItem={({ item }) => (
+                    <Card onLongPress={() => showPinDialog(item)} style={styles.card}>
                         <Card.Content>
-                            <List.Item title={item.content}/>
+                            <Text style={{
+                                lineHeight: 24, // 增加行高
+                                textAlign: 'justify', // 文本对齐方式
+                                padding: 10, // 增加内边距
+                            }} variant="bodyLarge">{item.content}</Text>
                         </Card.Content>
                         <Card.Actions>
                             <Button onPress={() => showUpdateModal(item.content)}>修改</Button>
@@ -96,10 +107,11 @@ const TodoLists = ({todos, addTodo, updateTodo, deleteTodo,pinTodo,reloadPage}) 
                 visible={timeModalVisible}
                 hideDialog={hideTimeDialog}
                 showDialog={showTimeDialog}
+                todoToSetReminder={todoToSetReminder}
             />
             <Portal.Host>
-                <FAB style={styles.fab} icon="plus" onPress={showAddModal}/>
-                <FAB style={styles.reload} icon="reload" onPress={reloadPage}/>
+                <FAB style={styles.fab} icon="plus" onPress={showAddModal} />
+                <FAB style={styles.reload} icon="reload" onPress={reloadPage} />
             </Portal.Host>
         </View>
     );
@@ -115,16 +127,18 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
-    reload:{
+    reload: {
         position: "absolute",
         margin: 16,
         right: 0,
         bottom: 100,
     },
     card: {
-        marginBottom: 10,
-        marginLeft: 13,
-        marginRight: 13
+        elevation: 5, // 添加阴影
+        borderRadius: 20, // 圆角
+        marginBottom: 20, // 间隔
+        marginLeft: 15, // 间隔
+        marginRight: 15, // 间隔
     }
 });
 

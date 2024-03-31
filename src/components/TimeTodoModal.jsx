@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Modal, Portal, Text, Button, TextInput } from "react-native-paper";
-import { StyleSheet, Platform, Alert } from "react-native";
+import { StyleSheet, Platform, Alert, ToastAndroid } from "react-native";
 import { ThemeContext } from "../stores/themeContext";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Calendar from "expo-calendar";
-
-export default function SetReminder({ hideDialog, visible }) {
+export default function SetReminder({ hideDialog, visible,todoToSetReminder }) {
   const themeContext = React.useContext(ThemeContext);
   const [reminderTime, setReminderTime] = useState(null);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -24,23 +23,34 @@ export default function SetReminder({ hideDialog, visible }) {
       Alert.alert("提醒设置失败", "请先选择提醒时间。");
     }
   };
-  async function getDefaultCalendarSource() {
-    const defaultCalendar = await Calendar.getDefaultCalendarAsync();
-    return defaultCalendar.source;
-  }
   const scheduleNotification = async () => {
     if (!reminderTime) {
       Alert.alert("提醒设置失败", "提醒时间不能为空");
       return;
     }
-
     const { status } = await Calendar.requestCalendarPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("提醒设置失败", "需要日历权限才能设置提醒");
+      ToastAndroid.show("需要日历权限才能设置提醒", ToastAndroid.SHORT);
       return;
     }
-  };
-
+    const calendars = await Calendar.getCalendarsAsync();
+    let defaultCalendar;
+    defaultCalendar = calendars.filter(each => each.accessLevel === "owner")[0]; ``
+    try {
+      const endDate = new Date();
+      endDate.setDate(reminderTime.getDate() + 1);
+      await Calendar.createEventAsync(defaultCalendar.id, {
+        title: todoToSetReminder,
+        startDate: reminderTime,
+        allDay: true,
+        endDate: endDate,
+        timeZone: 'Asia/Shanghai',
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
   const showDateTimePicker = () => {
     setDatePickerVisible(true);
   };
