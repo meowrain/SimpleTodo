@@ -37,6 +37,7 @@ export default function InputTodo({showModal, hideModal, visible, addTodo}) {
                 onDismiss={hideModal}
                 contentContainerStyle={styles.containerStyle}
                 theme={themeContext.paperTheme}
+                animationType="fade"
             >
                 <Text>输入你要添加的todo</Text>
                 <TextInput label="todo" value={todo} onChangeText={setTodo}/>

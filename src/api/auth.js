@@ -19,6 +19,7 @@ async function registerQuery(userData) {
     const resJson = await response.json();
     if (resJson.msg === "success") {
       console.log("注册成功！");
+      return resJson.data;
     }
   } catch (error) {
     throw error; // 重新抛出错误以便被捕获
@@ -44,7 +45,7 @@ async function loginQuery(userData) {
     const resJson = await response.json();
 
     if (resJson.msg !== "登录失败") {
-      console.log(`jwtToken: ${resJson.data}`);
+      // console.log(`jwtToken: ${resJson.data}`);
       await saveJwt(resJson.data);
       return resJson.data; // 返回 JWT 令牌
     } else {

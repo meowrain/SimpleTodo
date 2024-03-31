@@ -40,6 +40,7 @@ export default function UpdateTodo({ hideModal, visible, updateTodo, taskToUpdat
         onDismiss={hideModal}
         contentContainerStyle={styles.containerStyle}
         theme={themeContext.paperTheme}
+        animationType="fade"
       >
         <Text>修改你的todo</Text>
         <TextInput value={todo} onChangeText={setTodo} />

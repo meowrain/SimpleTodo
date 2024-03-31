@@ -25,7 +25,8 @@ const loadThemeState = async () => {
     try {
         return await storage.load({key: "isDarkModeOn"})
     } catch (error) {
-        console.error("加载主题状态失败", error)
+        return false;
+        // console.error("加载主题状态失败", error)
     }
 }
 export {saveThemeState, loadThemeState}

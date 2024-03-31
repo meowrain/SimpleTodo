@@ -1,64 +1,67 @@
 import * as React from "react";
-import {View, StyleSheet} from "react-native";
-import {Button, Card, Divider, Text, TextInput, useTheme} from "react-native-paper";
-import {loginQuery} from "../../api/auth";
+import { View, StyleSheet } from "react-native";
+import { Button, Card, Divider, Text, TextInput, useTheme } from "react-native-paper";
+import { loginQuery } from "../../api/auth";
 import { saveLoginState } from "../../utils/handleLoginState";
-
-const LoginScreen = ({navigation}) => {
-    const {colors} = useTheme();
+import { ToastAndroid } from "react-native";
+const LoginScreen = ({ navigation }) => {
+    const { colors } = useTheme();
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState('');
 
-    
+
     const handleLogin = async () => {
         if (!username || !password) {
-          setErrorMessage("账户名和密码不为空！");
-          console.log("密码不为空！");
-          return;
+            setErrorMessage("账户名和密码不为空！");
+            console.log("密码不为空！");
+            return;
         }
-      
+
         const userData = {
-          username,
-          password,
+            username,
+            password,
         };
-      
+
         try {
-          const res = await loginQuery(userData);
-          await saveLoginState(true)
-          setErrorMessage("")
-          navigation.goBack()
-          console.log(res);
-          // 执行其他操作,例如导航到主页面
-          // navigation.replace("Home");
+            const jwtToken = await loginQuery(userData);
+            await saveLoginState(true)
+            //如果jwtToken不是空串或者undefined，就navigation.goBack()
+            if (jwtToken) {
+                navigation.goBack();
+                ToastAndroid.show('✨登录成功!', ToastAndroid.SHORT);
+                setErrorMessage("")
+            }
+            // console.log(res);
         } catch (error) {
-          console.error("登录失败:", error);
-          setErrorMessage("登录失败,请稍后重试");
+            ToastAndroid.show('登录失败，请稍后重试', ToastAndroid.SHORT);
+            console.error("登录失败:", error);
+            setErrorMessage("登录失败,请稍后重试");
         }
-      };
+    };
 
 
     return (
-        <View style={[styles.container, {backgroundColor: colors.background}]}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Card style={styles.card}>
-                <Card.Title title="登录"/>
+                <Card.Title title="登录" />
                 <Card.Content>
                     <TextInput
                         label="用户名"
                         value={username}
-                        theme={{colors: {primary: colors.primary}}}
+                        theme={{ colors: { primary: colors.primary } }}
                         onChangeText={(username) => setUsername(username)}
                     />
                     <TextInput
                         label="密码"
                         value={password}
                         secureTextEntry
-                        theme={{colors: {primary: colors.primary}}}
+                        theme={{ colors: { primary: colors.primary } }}
                         onChangeText={(password) => setPassword(password)}
                     />
                     {errorMessage && <Text style={{ color: 'red' }}>{errorMessage}</Text>}
                 </Card.Content>
-                <Card.Actions style={{marginTop: 3}}>
+                <Card.Actions style={{ marginTop: 3 }}>
                     <Button
                         buttonColor={colors.primary}
                         onPress={() => navigation.goBack()}
@@ -75,7 +78,7 @@ const LoginScreen = ({navigation}) => {
                     </Button>
 
                 </Card.Actions>
-                <Text style={{textAlign: "right",marginTop: 3}} onPress={() => {
+                <Text style={{ textAlign: "right", marginTop: 3 }} onPress={() => {
                     navigation.navigate("Register")
                 }}>还没有账号？点击注册</Text>
             </Card>

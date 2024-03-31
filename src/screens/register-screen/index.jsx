@@ -1,8 +1,8 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Card,Text, TextInput, useTheme } from "react-native-paper";
+import { Button, Card, Text, TextInput, useTheme } from "react-native-paper";
 import { registerQuery } from "../../api/auth";
-
+import { ToastAndroid } from "react-native";
 const RegisterScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const [username, setUsername] = React.useState("");
@@ -18,9 +18,18 @@ const RegisterScreen = ({ navigation }) => {
       username,
       password,
     };
-    const res = await registerQuery(userData);
-    if (res) {
-      navigation.goBack();
+    try {
+      const res = await registerQuery(userData);
+      if(res) {
+        ToastAndroid.show('✨注册成功!', ToastAndroid.SHORT);
+        setErrorMessage("");
+        navigation.goBack();
+      }
+      console.log(res)
+    } catch (err) {
+      console.error("注册失败:", err);
+      setErrorMessage("注册失败,请稍后重试");
+      ToastAndroid.show('注册失败,请稍后重试', ToastAndroid.SHORT);
     }
   };
 
