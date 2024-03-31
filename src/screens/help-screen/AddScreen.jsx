@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
+import {View, Text, TouchableOpacity} from "react-native";
 import {Divider, useTheme} from "react-native-paper";
 import {ThemeContext} from "../../stores/themeContext";
 import useStyles from "./pageStyle";

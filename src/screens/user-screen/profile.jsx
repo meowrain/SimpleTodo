@@ -1,20 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Button } from "react-native";
-import { Avatar, Caption } from "react-native-paper";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Avatar,
+  Caption,
+  Button,
+  List,
+  Divider,
+  useTheme,
+  Modal,
+  Portal,
+  Text,
+  TextInput,
+} from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { getCurrentUser, updateUserProfile, UploadImage } from "../../api/user";
+import { Picker } from "@react-native-picker/picker";
+import { ThemeContext } from "../../stores/themeContext";
 
 const UserProfile = ({ navigation }) => {
+  const themeContext = React.useContext(ThemeContext);
+  const { colors } = useTheme();
   const [userInfo, setUserInfo] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [editing, setEditing] = useState(false);
+  const [GenderVisible, setGenderModalVisible] = useState(false);
+  const [BirthdayVisible, setBirthdayModalVisible] = useState(false);
+  const [EmailVisible, setEmailModalVisible] = useState(false);
+  const [PhoneNumberVisible, setPhoneNumberModalVisible] = useState(false);
+  const [BioVisible, setBioModalVisible] = useState(false);
+  const [birthdayInput, setBirthdayInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+  const [phoneNumberInput, setPhoneNumberInput] = useState("");
+  const [bioInput, setBioInput] = useState("");
+
   const [formData, setFormData] = useState({
-    username: '',
-    gender: '',
-    birthday: '',
-    email: '',
-    phoneNumber: '',
-    bio: ''
+    username: "",
+    gender: "",
+    birthday: "",
+    email: "",
+    phoneNumber: "",
+    bio: "",
   });
 
   useEffect(() => {
@@ -29,7 +54,7 @@ const UserProfile = ({ navigation }) => {
           birthday: user.birthday,
           email: user.email,
           phoneNumber: user.phoneNumber,
-          bio: user.bio
+          bio: user.bio,
         });
       } catch (error) {
         console.error("加载用户信息失败", error);
@@ -51,7 +76,6 @@ const UserProfile = ({ navigation }) => {
       aspect: [1, 1],
       quality: 1,
     });
-  
     if (!result.canceled) {
       //调用用户图片的API
       uri = result.assets[0].uri;
@@ -60,129 +84,331 @@ const UserProfile = ({ navigation }) => {
       setAvatarUrl(`${newAvatarUrl}?${Date.now()}`);
     }
   };
-
-  const handleEditProfile = () => {
-    setEditing(true);
-  };
-
+  
+  //没应用
   const handleSaveProfile = async () => {
     try {
-       // 调用更新用户信息的 API
-      await updateUserProfile(formData); 
+      // 调用更新用户信息的 API
+      await updateUserProfile(formData);
       setEditing(false);
     } catch (error) {
       console.error("更新用户信息失败", error);
     }
   };
 
-  const handleChangeText = (key, value) => {
-    setFormData({
-      ...formData,
-      [key]: value
-    });
+  //更新数据
+  const updateUserInfo = (key, value) => {
+    setUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      [key]: value,
+    }));
   };
-  
+
+  //生日部分
+  const handleBirthdayChange = (text) => {
+    setBirthdayInput(text);
+  };
+  const handleBirthdaySubmit = () => {
+    updateUserInfo("birthday", birthdayInput);
+    setBirthdayModalVisible(false);
+    setBirthdayInput(""); // 清空输入框
+  };
+
+  //邮箱部分
+  const handleEmailChange = (text) => {
+    setEmailInput(text);
+  };
+  const handleEmailSubmit = () => {
+    updateUserInfo("email", emailInput);
+    setEmailModalVisible(false);
+    setEmailInput(""); // 清空输入框
+  };
+
+  //电话号码部分
+  const handlePhoneNumberChange = (text) => {
+    setPhoneNumberInput(text);
+  };
+  const handlePhoneNumberSubmit = () => {
+    updateUserInfo("phoneNumber", phoneNumberInput);
+    setPhoneNumberModalVisible(false);
+    setPhoneNumberInput(""); // 清空输入框
+  };
+
+  //个人简介部分
+  const handleBioChange = (text) => {
+    setBioInput(text);
+  };
+  const handleBioSubmit = () => {
+    updateUserInfo("bio", bioInput);
+    setBioModalVisible(false);
+    setBioInput(""); // 清空输入框
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#fff",
+    },
+    buttonStyle: {
+      marginTop: 20,
+    },
+    userInfo:{
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    containerStyle: {
+      backgroundColor: themeContext.paperTheme.colors.background,
+      padding: 20,
+      margin: 20,
+      borderRadius: 20,
+    },
+  });
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <TouchableOpacity onPress={handleUploadAvatar}>
-        <Avatar.Image size={100} source={{ uri: avatarUrl }} style={styles.avatar} />
+        <Avatar.Image
+          size={100}
+          source={{ uri: avatarUrl }}
+        />
       </TouchableOpacity>
-      {userInfo && (
+      
         <View style={styles.userInfo}>
-          {editing ? (
-            <>
-              <TextInput
-                style={styles.input}
-                value={formData.username}
-                onChangeText={text => handleChangeText('username', text)}
-                placeholder="用户名"
-              />
-              <TextInput
-                style={styles.input}
-                value={formData.gender}
-                onChangeText={text => handleChangeText('gender', text)}
-                placeholder="性别"
-              />
-              <TextInput
-                style={styles.input}
-                value={formData.birthday}
-                onChangeText={text => handleChangeText('birthday', text)}
-                placeholder="生日"
-              />
-              <TextInput
-                style={styles.input}
-                value={formData.email}
-                onChangeText={text => handleChangeText('email', text)}
-                placeholder="邮箱"
-              />
-              <TextInput
-                style={styles.input}
-                value={formData.phoneNumber}
-                onChangeText={text => handleChangeText('phoneNumber', text)}
-                placeholder="电话号码"
-              />
-              <TextInput
-                style={styles.input}
-                value={formData.bio}
-                onChangeText={text => handleChangeText('bio', text)}
-                placeholder="个人简介"
-              />
-              {/* 其他个人信息的输入框... */}
-              <Button title="保存" onPress={handleSaveProfile} />
-            </>
-          ) : (
-            <>
-              <Text style={styles.username}>{userInfo.username}</Text>
+              <List.Section>
+                <List.Item
+                  title={userInfo.username}
+                  left={(props) => <List.Icon {...props} icon="" />}
+                />
+              </List.Section>
               <Caption>@{userInfo.username}</Caption>
-              <Text style={styles.infoLabel}>性别：</Text>
-              <Text style={styles.infoValue}>{userInfo.gender}</Text>
-              <Text style={styles.infoLabel}>生日：</Text>
-              <Text style={styles.infoValue}>{userInfo.birthday}</Text>
-              <Text style={styles.infoLabel}>邮箱：</Text>
-              <Text style={styles.infoValue}>{userInfo.email}</Text>
-              <Text style={styles.infoLabel}>电话号码：</Text>
-              <Text style={styles.infoValue}>{userInfo.phoneNumber}</Text>
-              <Text style={styles.infoLabel}>个人简介：</Text>
-              <Text style={styles.infoValue}>{userInfo.bio}</Text>
-              <Button title="编辑" onPress={handleEditProfile} />
-            </>
-          )}
+              <Divider />
+              <List.Item
+                title={userInfo.gender}
+                description="性别"
+                left={(props) => (
+                  <List.Icon {...props} icon="gender-male-female" />
+                )}
+                right={() => (
+                  <Button
+                    icon="chevron-right"
+                    onPress={() => setGenderModalVisible(true)}
+                  />
+                )}
+              />
+              <Portal>
+                <Modal
+                  visible={GenderVisible}
+                  contentContainerStyle={styles.containerStyle}
+                  theme={themeContext.paperTheme}
+                  onRequestClose={() => setGenderModalVisible(false)}
+                >
+                  <Picker
+                    selectedValue={userInfo.gender}
+                    onValueChange={(itemValue) => {
+                      updateUserInfo("gender", itemValue);
+                      setGenderModalVisible(false); // 在选择性别后关闭模态框
+                    }}
+                  >
+                    <Picker.Item label="男" value="男" />
+                    <Picker.Item label="女" value="女" />
+                  </Picker>
+                </Modal>
+              </Portal>
+              <Divider />
+
+              <List.Item
+                title={userInfo.birthday}
+                description="生日"
+                left={(props) => <List.Icon {...props} icon="calendar" />}
+                right={() => (
+                  <Button
+                    icon="chevron-right"
+                    onPress={() => setBirthdayModalVisible(true)}
+                  />
+                )}
+              />
+              <Portal>
+                <Modal
+                  visible={BirthdayVisible}
+                  contentContainerStyle={styles.containerStyle}
+                  theme={themeContext.paperTheme}
+                  onRequestClose={() => setBirthdayModalVisible(false)}
+                >
+                  <Text>设置生日</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="自定义生日（YYYY-MM-DD）"
+                    onChangeText={handleBirthdayChange}
+                    value={birthdayInput}
+                  />
+                  <Button
+                    icon="calendar"
+                    mode="contained"
+                    style={styles.buttonStyle}
+                    title="确定"
+                    onPress={handleBirthdaySubmit}
+                  >
+                    确定
+                  </Button>
+                  <Button
+                    icon="close"
+                    mode="outlined"
+                    style={styles.buttonStyle}
+                    title="取消"
+                    onPress={() => setBirthdayModalVisible(false)}
+                  >
+                    取消
+                  </Button>
+                </Modal>
+              </Portal>
+              <Divider />
+
+              <List.Item
+                title={userInfo.email}
+                description="邮箱"
+                left={(props) => <List.Icon {...props} icon="email" />}
+                right={() => (
+                  <Button icon="chevron-right" onPress={setEmailModalVisible} />
+                )}
+              />
+              <Portal>
+                <Modal
+                  visible={EmailVisible}
+                  contentContainerStyle={styles.containerStyle}
+                  theme={themeContext.paperTheme}
+                  onRequestClose={() => setEmailModalVisible(false)}
+                >
+                  <TextInput
+                    style={styles.input}
+                    placeholder="请输入邮箱"
+                    onChangeText={handleEmailChange}
+                    value={emailInput}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                  />
+                  <Button
+                    icon="email"
+                    mode="contained"
+                    style={styles.buttonStyle}
+                    title="确定"
+                    onPress={handleEmailSubmit}
+                  >
+                    确定
+                  </Button>
+                  <Button
+                    icon="close"
+                    mode="outlined"
+                    style={styles.buttonStyle}
+                    title="取消"
+                    onPress={() => setEmailModalVisible(false)}
+                  >
+                    取消
+                  </Button>
+                </Modal>
+              </Portal>
+              <Divider />
+
+              <List.Item
+                title={userInfo.phoneNumber}
+                description="电话号码"
+                left={(props) => <List.Icon {...props} icon="phone" />}
+                right={() => (
+                  <Button
+                    icon="chevron-right"
+                    onPress={setPhoneNumberModalVisible}
+                  />
+                )}
+              />
+              <Portal>
+                <Modal
+                  visible={PhoneNumberVisible}
+                  contentContainerStyle={styles.containerStyle}
+                  theme={themeContext.paperTheme}
+                  onRequestClose={() => setPhoneNumberModalVisible(false)}
+                >
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={handlePhoneNumberChange}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    placeholder="请输入电话号码"
+                    value={phoneNumberInput}
+                    keyboardType="phone-pad"
+                  />
+                  <Button
+                    icon="phone"
+                    mode="contained"
+                    style={styles.buttonStyle}
+                    title="确定"
+                    onPress={handlePhoneNumberSubmit}
+                  >
+                    确定
+                  </Button>
+                  <Button
+                    icon="close"
+                    mode="outlined"
+                    style={styles.buttonStyle}
+                    title="取消"
+                    onPress={() => setPhoneNumberModalVisible(false)}
+                  >
+                    取消
+                  </Button>
+                </Modal>
+              </Portal>
+              <Divider />
+
+              <List.Item
+                title={userInfo.bio}
+                description="个人简介"
+                left={(props) => <List.Icon {...props} icon="information" />}
+                right={() => (
+                  <Button icon="chevron-right" onPress={setBioModalVisible} />
+                )}
+              />
+              <Portal>
+                <Modal
+                  visible={BioVisible}
+                  contentContainerStyle={styles.containerStyle}
+                  theme={themeContext.paperTheme}
+                  onRequestClose={() => setBioModalVisible(false)}
+                >
+                  <TextInput
+                    style={styles.input}
+                    placeholder="请输入个人简介"
+                    onChangeText={handleBioChange}
+                    value={bioInput}
+                    multiline={true}
+                    numberOfLines={4}
+                    autoCapitalize="sentences"
+                    autoCorrect={true}
+                  />
+                  <Button
+                    icon="information"
+                    mode="contained"
+                    style={styles.buttonStyle}
+                    title="确定"
+                    onPress={handleBioSubmit}
+                  >
+                    确定
+                  </Button>
+                  <Button
+                    icon="close"
+                    mode="outlined"
+                    style={styles.buttonStyle}
+                    title="取消"
+                    onPress={() => setBioModalVisible(false)}
+                  >
+                    取消
+                  </Button>
+                </Modal>
+              </Portal>
+              <Divider />
         </View>
-      )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-  },
-  avatar: {
-    marginBottom: 20,
-  },
-  userInfo: {
-    alignItems: "center",
-  },
-  username: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  personalInfo: {
-    marginTop: 20,
-  },
-  infoLabel: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  infoValue: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-});
 
 export default UserProfile;
