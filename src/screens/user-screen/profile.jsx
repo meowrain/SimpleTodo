@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, ToastAndroid } from "react-native";
 import {
   Avatar,
   Caption,
@@ -16,7 +16,6 @@ import * as ImagePicker from "expo-image-picker";
 import { getCurrentUser, updateUserProfile, UploadImage } from "../../api/user";
 import { Picker } from "@react-native-picker/picker";
 import { ThemeContext } from "../../stores/themeContext";
-
 const UserProfile = ({ navigation }) => {
   const { isDarkModeOn, paperTheme } = React.useContext(ThemeContext);
   const { colors } = useTheme();
@@ -97,7 +96,13 @@ const UserProfile = ({ navigation }) => {
     try {
       // 调用更新用户信息的 API
       let res = await updateUserProfile(userInfo);
-      console.info("updatedInfo: ",res)
+      console.info("updatedInfo: ", res)
+      if (res) {
+        ToastAndroid.show('✨修改个人资料成功!', ToastAndroid.SHORT);
+        navigation.goBack()
+      } else {
+        ToastAndroid.show('😢修改个人资料失败，请稍后重试', ToastAndroid.SHORT);
+      }
       setEditing(false);
     } catch (error) {
       console.error("更新用户信息失败", error);
@@ -433,7 +438,7 @@ const UserProfile = ({ navigation }) => {
         </Portal>
         <Divider />
       </View>
-      <Button icon="archive" mode="contained" style={{marginTop: 10}} theme={paperTheme} onPress={()=>handleSaveProfile(userInfo)}>保存</Button>
+      <Button icon="archive" mode="contained" style={{ marginTop: 10 }} theme={paperTheme} onPress={() => handleSaveProfile(userInfo)}>保存</Button>
     </View>
   );
 };
