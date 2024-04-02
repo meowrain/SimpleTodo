@@ -65,11 +65,11 @@ async function UploadImage(imageUri,mimeType) {
 async function updateUserProfile(formData) {
   try {
     const jwtToken = await loadJwt();
-    const headers = {"Authorization": jwtToken};
+    const headers = {"Authorization": jwtToken, "Content-Type": "application/json"} // 指定内容类型为 JSON};
     const response = await fetch(`${API_URL}/users/update`,{
       method: 'PUT',
       headers: headers,
-      body: formData
+      body: JSON.stringify(formData)
     });
     const resJson = await response.json();
     if (response.ok) {
@@ -82,4 +82,4 @@ async function updateUserProfile(formData) {
     throw err;
   }
 }
-export {getCurrentUser,UploadImage}
+export {getCurrentUser,UploadImage,updateUserProfile}

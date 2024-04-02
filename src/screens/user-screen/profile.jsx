@@ -25,7 +25,7 @@ const UserProfile = ({ navigation }) => {
     gender: '',
     birthday: '',
     email: '',
-    phoneNumber: '',
+    phonenumber: '',
     bio: '',
   });
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -41,11 +41,11 @@ const UserProfile = ({ navigation }) => {
   const [bioInput, setBioInput] = useState("");
 
   const [formData, setFormData] = useState({
-    username: "admin",
-    gender: "男",
+    username: "",
+    gender: "",
     birthday: "",
-    email: "meowrain@126.com",
-    phoneNumber: "",
+    email: "",
+    phonenumber: "",
     bio: "",
   });
 
@@ -60,7 +60,7 @@ const UserProfile = ({ navigation }) => {
           gender: user.gender,
           birthday: user.birthday,
           email: user.email,
-          phoneNumber: user.phoneNumber,
+          phonenumber: user.phonenumber,
           bio: user.bio,
         });
       } catch (error) {
@@ -96,7 +96,8 @@ const UserProfile = ({ navigation }) => {
   const handleSaveProfile = async () => {
     try {
       // 调用更新用户信息的 API
-      await updateUserProfile(formData);
+      let res = await updateUserProfile(userInfo);
+      console.info("updatedInfo: ",res)
       setEditing(false);
     } catch (error) {
       console.error("更新用户信息失败", error);
@@ -136,7 +137,7 @@ const UserProfile = ({ navigation }) => {
     setPhoneNumberInput(text);
   };
   const handlePhoneNumberSubmit = () => {
-    updateUserInfo("phoneNumber", phoneNumberInput);
+    updateUserInfo("phonenumber", phoneNumberInput);
     setPhoneNumberModalVisible(false);
     setPhoneNumberInput(""); // 清空输入框
   };
@@ -332,7 +333,7 @@ const UserProfile = ({ navigation }) => {
         <Divider />
 
         <List.Item
-          title={userInfo.phoneNumber}
+          title={userInfo.phonenumber}
           description="电话号码"
           left={(props) => <List.Icon {...props} icon="phone" />}
           right={() => (
