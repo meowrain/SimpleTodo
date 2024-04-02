@@ -60,4 +60,26 @@ async function UploadImage(imageUri,mimeType) {
     throw err;
   }
 }
+
+//更新用户信息
+async function updateUserProfile(formData) {
+  try {
+    const jwtToken = await loadJwt();
+    const headers = {"Authorization": jwtToken};
+    const response = await fetch(`${API_URL}/users/update`,{
+      method: 'PUT',
+      headers: headers,
+      body: formData
+    });
+    const resJson = await response.json();
+    if (response.ok) {
+      return resJson.data;
+    } else {
+      throw new Error(resJson.error || 'Error updating user profile');
+    }
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
 export {getCurrentUser,UploadImage}
