@@ -35,6 +35,7 @@ export default function InputTodo({showModal, hideModal, visible, addTodo}) {
             <Modal
                 visible={visible}
                 onDismiss={hideModal}
+                onRquestClose={hideModal}
                 contentContainerStyle={styles.containerStyle}
                 theme={themeContext.paperTheme}
                 animationType="fade"

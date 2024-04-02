@@ -18,9 +18,16 @@ import { Picker } from "@react-native-picker/picker";
 import { ThemeContext } from "../../stores/themeContext";
 
 const UserProfile = ({ navigation }) => {
-  const themeContext = React.useContext(ThemeContext);
+  const { isDarkModeOn, paperTheme } = React.useContext(ThemeContext);
   const { colors } = useTheme();
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({
+    username: '',
+    gender: '',
+    birthday: '',
+    email: '',
+    phoneNumber: '',
+    bio: '',
+  });
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [editing, setEditing] = useState(false);
   const [GenderVisible, setGenderModalVisible] = useState(false);
@@ -34,10 +41,10 @@ const UserProfile = ({ navigation }) => {
   const [bioInput, setBioInput] = useState("");
 
   const [formData, setFormData] = useState({
-    username: "",
-    gender: "",
+    username: "admin",
+    gender: "男",
     birthday: "",
-    email: "",
+    email: "meowrain@126.com",
     phoneNumber: "",
     bio: "",
   });
@@ -84,7 +91,7 @@ const UserProfile = ({ navigation }) => {
       setAvatarUrl(`${newAvatarUrl}?${Date.now()}`);
     }
   };
-  
+
   //没应用
   const handleSaveProfile = async () => {
     try {
@@ -149,17 +156,16 @@ const UserProfile = ({ navigation }) => {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "#fff",
     },
     buttonStyle: {
       marginTop: 20,
     },
-    userInfo:{
-      alignItems: "center",
-      justifyContent: "center",
+    userInfo: {
+      alignItems: "baseline",
+      paddingLeft: 20
     },
     containerStyle: {
-      backgroundColor: themeContext.paperTheme.colors.background,
+      backgroundColor: paperTheme.colors.background,
       padding: 20,
       margin: 20,
       borderRadius: 20,
@@ -174,239 +180,259 @@ const UserProfile = ({ navigation }) => {
           source={{ uri: avatarUrl }}
         />
       </TouchableOpacity>
-      
-        <View style={styles.userInfo}>
-              <List.Section>
-                <List.Item
-                  title={userInfo.username}
-                  left={(props) => <List.Icon {...props} icon="" />}
-                />
-              </List.Section>
-              <Caption>@{userInfo.username}</Caption>
-              <Divider />
-              <List.Item
-                title={userInfo.gender}
-                description="性别"
-                left={(props) => (
-                  <List.Icon {...props} icon="gender-male-female" />
-                )}
-                right={() => (
-                  <Button
-                    icon="chevron-right"
-                    onPress={() => setGenderModalVisible(true)}
-                  />
-                )}
-              />
-              <Portal>
-                <Modal
-                  visible={GenderVisible}
-                  contentContainerStyle={styles.containerStyle}
-                  theme={themeContext.paperTheme}
-                  onRequestClose={() => setGenderModalVisible(false)}
-                >
-                  <Picker
-                    selectedValue={userInfo.gender}
-                    onValueChange={(itemValue) => {
-                      updateUserInfo("gender", itemValue);
-                      setGenderModalVisible(false); // 在选择性别后关闭模态框
-                    }}
-                  >
-                    <Picker.Item label="男" value="男" />
-                    <Picker.Item label="女" value="女" />
-                  </Picker>
-                </Modal>
-              </Portal>
-              <Divider />
+      <List.Section>
+        <List.Item
+          title={userInfo.username}
+          left={(props) => <List.Icon {...props} icon="" />}
+        />
+      </List.Section>
 
-              <List.Item
-                title={userInfo.birthday}
-                description="生日"
-                left={(props) => <List.Icon {...props} icon="calendar" />}
-                right={() => (
-                  <Button
-                    icon="chevron-right"
-                    onPress={() => setBirthdayModalVisible(true)}
-                  />
-                )}
-              />
-              <Portal>
-                <Modal
-                  visible={BirthdayVisible}
-                  contentContainerStyle={styles.containerStyle}
-                  theme={themeContext.paperTheme}
-                  onRequestClose={() => setBirthdayModalVisible(false)}
-                >
-                  <Text>设置生日</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="自定义生日（YYYY-MM-DD）"
-                    onChangeText={handleBirthdayChange}
-                    value={birthdayInput}
-                  />
-                  <Button
-                    icon="calendar"
-                    mode="contained"
-                    style={styles.buttonStyle}
-                    title="确定"
-                    onPress={handleBirthdaySubmit}
-                  >
-                    确定
-                  </Button>
-                  <Button
-                    icon="close"
-                    mode="outlined"
-                    style={styles.buttonStyle}
-                    title="取消"
-                    onPress={() => setBirthdayModalVisible(false)}
-                  >
-                    取消
-                  </Button>
-                </Modal>
-              </Portal>
-              <Divider />
+      <Divider />
+      <View style={styles.userInfo}>
+        <List.Item
+          title={userInfo.gender}
+          description="性别"
+          left={(props) => (
+            <>
+              {userInfo.gender === '男' ? <List.Icon {...props} icon="gender-male" /> : <List.Icon {...props} icon="gender-female" />}
+            </>
+          )}
+          right={() => (
+            <Button
+              icon="chevron-right"
+              onPress={() => setGenderModalVisible(true)}
+            />
+          )}
+          onPress={() => setGenderModalVisible(true)}
+        />
+        <Portal>
+          <Modal
+            visible={GenderVisible}
+            contentContainerStyle={styles.containerStyle}
+            theme={paperTheme}
+            onRequestClose={() => setGenderModalVisible(false)}
+            onDismiss={() => setGenderModalVisible(false)}
+          >
+            <Picker
+              selectedValue={userInfo.gender}
+              onValueChange={(itemValue) => {
+                updateUserInfo("gender", itemValue);
+                setGenderModalVisible(false); // 在选择性别后关闭模态框
+              }}
+              mode="dialog"
+              dropdownIconColor={isDarkModeOn ? 'white' : 'black'}
+              prompt="选择您的性别"
+              style={{
+                color: `${isDarkModeOn ? 'white' : 'black'}`
+              }}
+            >
+              <Picker.Item label="男" value="男" />
+              <Picker.Item label="女" value="女" />
+            </Picker>
+          </Modal>
+        </Portal>
 
-              <List.Item
-                title={userInfo.email}
-                description="邮箱"
-                left={(props) => <List.Icon {...props} icon="email" />}
-                right={() => (
-                  <Button icon="chevron-right" onPress={setEmailModalVisible} />
-                )}
-              />
-              <Portal>
-                <Modal
-                  visible={EmailVisible}
-                  contentContainerStyle={styles.containerStyle}
-                  theme={themeContext.paperTheme}
-                  onRequestClose={() => setEmailModalVisible(false)}
-                >
-                  <TextInput
-                    style={styles.input}
-                    placeholder="请输入邮箱"
-                    onChangeText={handleEmailChange}
-                    value={emailInput}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                  <Button
-                    icon="email"
-                    mode="contained"
-                    style={styles.buttonStyle}
-                    title="确定"
-                    onPress={handleEmailSubmit}
-                  >
-                    确定
-                  </Button>
-                  <Button
-                    icon="close"
-                    mode="outlined"
-                    style={styles.buttonStyle}
-                    title="取消"
-                    onPress={() => setEmailModalVisible(false)}
-                  >
-                    取消
-                  </Button>
-                </Modal>
-              </Portal>
-              <Divider />
+        <Divider />
 
-              <List.Item
-                title={userInfo.phoneNumber}
-                description="电话号码"
-                left={(props) => <List.Icon {...props} icon="phone" />}
-                right={() => (
-                  <Button
-                    icon="chevron-right"
-                    onPress={setPhoneNumberModalVisible}
-                  />
-                )}
-              />
-              <Portal>
-                <Modal
-                  visible={PhoneNumberVisible}
-                  contentContainerStyle={styles.containerStyle}
-                  theme={themeContext.paperTheme}
-                  onRequestClose={() => setPhoneNumberModalVisible(false)}
-                >
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={handlePhoneNumberChange}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    placeholder="请输入电话号码"
-                    value={phoneNumberInput}
-                    keyboardType="phone-pad"
-                  />
-                  <Button
-                    icon="phone"
-                    mode="contained"
-                    style={styles.buttonStyle}
-                    title="确定"
-                    onPress={handlePhoneNumberSubmit}
-                  >
-                    确定
-                  </Button>
-                  <Button
-                    icon="close"
-                    mode="outlined"
-                    style={styles.buttonStyle}
-                    title="取消"
-                    onPress={() => setPhoneNumberModalVisible(false)}
-                  >
-                    取消
-                  </Button>
-                </Modal>
-              </Portal>
-              <Divider />
+        <List.Item
+          title={userInfo.birthday}
+          description="生日"
+          left={(props) => <List.Icon {...props} icon="calendar" />}
+          right={() => (
+            <Button
+              icon="chevron-right"
+              onPress={() => setBirthdayModalVisible(true)}
+            />
+          )}
+          onPress={() => setBirthdayModalVisible(true)}
+        />
+        <Portal>
+          <Modal
+            visible={BirthdayVisible}
+            contentContainerStyle={styles.containerStyle}
+            theme={paperTheme}
+            onRequestClose={() => setBirthdayModalVisible(false)}
+            onDismiss={() => setBirthdayModalVisible(false)}
+          >
+            <Text>设置生日</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="自定义生日（YYYY-MM-DD）"
+              onChangeText={handleBirthdayChange}
+              value={birthdayInput}
+            />
+            <Button
+              icon="calendar"
+              mode="contained"
+              style={styles.buttonStyle}
+              title="确定"
+              onPress={handleBirthdaySubmit}
+            >
+              确定
+            </Button>
+            <Button
+              icon="close"
+              mode="outlined"
+              style={styles.buttonStyle}
+              title="取消"
+              onPress={() => setBirthdayModalVisible(false)}
+            >
+              取消
+            </Button>
+          </Modal>
+        </Portal>
+        <Divider />
 
-              <List.Item
-                title={userInfo.bio}
-                description="个人简介"
-                left={(props) => <List.Icon {...props} icon="information" />}
-                right={() => (
-                  <Button icon="chevron-right" onPress={setBioModalVisible} />
-                )}
-              />
-              <Portal>
-                <Modal
-                  visible={BioVisible}
-                  contentContainerStyle={styles.containerStyle}
-                  theme={themeContext.paperTheme}
-                  onRequestClose={() => setBioModalVisible(false)}
-                >
-                  <TextInput
-                    style={styles.input}
-                    placeholder="请输入个人简介"
-                    onChangeText={handleBioChange}
-                    value={bioInput}
-                    multiline={true}
-                    numberOfLines={4}
-                    autoCapitalize="sentences"
-                    autoCorrect={true}
-                  />
-                  <Button
-                    icon="information"
-                    mode="contained"
-                    style={styles.buttonStyle}
-                    title="确定"
-                    onPress={handleBioSubmit}
-                  >
-                    确定
-                  </Button>
-                  <Button
-                    icon="close"
-                    mode="outlined"
-                    style={styles.buttonStyle}
-                    title="取消"
-                    onPress={() => setBioModalVisible(false)}
-                  >
-                    取消
-                  </Button>
-                </Modal>
-              </Portal>
-              <Divider />
-        </View>
+        <List.Item
+          title={userInfo.email}
+          description="邮箱"
+          left={(props) => <List.Icon {...props} icon="email" />}
+          right={() => (
+            <Button icon="chevron-right" onPress={setEmailModalVisible} />
+          )}
+          onPress={setEmailModalVisible}
+        />
+        <Portal>
+          <Modal
+            visible={EmailVisible}
+            contentContainerStyle={styles.containerStyle}
+            theme={paperTheme}
+            onRequestClose={() => setEmailModalVisible(false)}
+            onDismiss={() => setEmailModalVisible(false)}
+          >
+            <TextInput
+              style={styles.input}
+              placeholder="请输入邮箱"
+              onChangeText={handleEmailChange}
+              value={emailInput}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <Button
+              icon="email"
+              mode="contained"
+              style={styles.buttonStyle}
+              title="确定"
+              onPress={handleEmailSubmit}
+            >
+              确定
+            </Button>
+            <Button
+              icon="close"
+              mode="outlined"
+              style={styles.buttonStyle}
+              title="取消"
+              onPress={() => setEmailModalVisible(false)}
+            >
+              取消
+            </Button>
+          </Modal>
+        </Portal>
+        <Divider />
+
+        <List.Item
+          title={userInfo.phoneNumber}
+          description="电话号码"
+          left={(props) => <List.Icon {...props} icon="phone" />}
+          right={() => (
+            <Button
+              icon="chevron-right"
+              onPress={setPhoneNumberModalVisible}
+            />
+          )}
+          onPress={setPhoneNumberModalVisible}
+        />
+        <Portal>
+          <Modal
+            visible={PhoneNumberVisible}
+            contentContainerStyle={styles.containerStyle}
+            theme={paperTheme}
+            onRequestClose={() => setPhoneNumberModalVisible(false)}
+            onDismiss={() => setPhoneNumberModalVisible(false)}
+            onPress={handlePhoneNumberSubmit}
+          >
+            <TextInput
+              style={styles.input}
+              onChangeText={handlePhoneNumberChange}
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder="请输入电话号码"
+              value={phoneNumberInput}
+              keyboardType="phone-pad"
+            />
+            <Button
+              icon="phone"
+              mode="contained"
+              style={styles.buttonStyle}
+              title="确定"
+              onPress={handlePhoneNumberSubmit}
+            >
+              确定
+            </Button>
+            <Button
+              icon="close"
+              mode="outlined"
+              style={styles.buttonStyle}
+              title="取消"
+              onPress={() => setPhoneNumberModalVisible(false)}
+            >
+              取消
+            </Button>
+          </Modal>
+        </Portal>
+        <Divider />
+
+        <List.Item
+          title={userInfo.bio}
+          description="个人简介"
+          left={(props) => <List.Icon {...props} icon="information" />}
+          right={() => (
+            <Button icon="chevron-right" onPress={setBioModalVisible} />
+          )}
+          onPress={setBioModalVisible}
+        />
+        <Portal>
+          <Modal
+            visible={BioVisible}
+            contentContainerStyle={styles.containerStyle}
+            theme={paperTheme}
+            onRequestClose={() => setBioModalVisible(false)}
+            onDismiss={() => setBioModalVisible(false)}
+          >
+            <TextInput
+              style={styles.input}
+              placeholder="请输入个人简介"
+              onChangeText={handleBioChange}
+              value={bioInput}
+              multiline={true}
+              numberOfLines={4}
+              autoCapitalize="sentences"
+              autoCorrect={true}
+            />
+            <Button
+              icon="information"
+              mode="contained"
+              style={styles.buttonStyle}
+              title="确定"
+              onPress={handleBioSubmit}
+            >
+              确定
+            </Button>
+            <Button
+              icon="close"
+              mode="outlined"
+              style={styles.buttonStyle}
+              title="取消"
+              onPress={() => setBioModalVisible(false)}
+            >
+              取消
+            </Button>
+          </Modal>
+        </Portal>
+        <Divider />
+      </View>
+      <Button icon="archive" mode="contained" style={{marginTop: 10}} theme={paperTheme} onPress={()=>handleSaveProfile(userInfo)}>保存</Button>
     </View>
   );
 };
