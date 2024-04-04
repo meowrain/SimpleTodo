@@ -34,10 +34,6 @@ const useStyles = () => {
             color: isDarkModeOn ? 'white' : 'black',
         },
         button: {
-            width: 100,
-            height: 40,
-            borderRadius: 30,
-            backgroundColor: 'lightblue',
             justifyContent: 'center',
             alignItems: 'center',
             marginBottom: 200,

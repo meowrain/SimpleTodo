@@ -1,6 +1,11 @@
 import {loadJwt} from "../utils/handleJwt";
 import {API_URL} from '@env'
 
+/**
+ * @function getTodos
+ * @description 获取所有todo
+ * @return {Promise<Object|number|*>}
+ */
 async function getTodos() {
     try {
         const jwtToken = await loadJwt();
@@ -16,7 +21,8 @@ async function getTodos() {
     }
 }
 /**
- * 向后端添加一个新的待办事项
+ * @function addTodoBackend
+ * @description 向后端添加一个新的待办事项
  * @param {Object} todo - 待添加的待办事项对象
  * @param {string} todo.content - 待办事项内容
  * @param {string} todo.tag - 待办事项标签
@@ -51,7 +57,8 @@ async function addTodoBackend(todo) {
 }
 
 /**
- * @function
+ * @function deleteTodoFromBackend
+ * @description 从后端删除todo
  * @param {int} id 要删除的todo id
  * @return {Promise<void>}
  * */
@@ -74,7 +81,8 @@ async function deleteTodoFromBackend(id) {
 }
 
 /**
- * @function
+ * @function updateTodoFromBackend
+ * @description 更新todo
  * @param {int} id 要更改的todo id
  * @param {Object} todo
  * @return {Promise<void>}
@@ -100,6 +108,7 @@ async function updateTodoFromBackend(id,todo) {
 
 /**
  * @function
+ * @description 获取用户todo的条数
  * @returns {Promise<{count: number}>}
  * */
 async function getTodoNumFromBackend() {

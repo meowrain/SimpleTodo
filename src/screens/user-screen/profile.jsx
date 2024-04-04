@@ -84,8 +84,8 @@ const UserProfile = ({ navigation }) => {
     });
     if (!result.canceled) {
       //调用用户图片的API
-      uri = result.assets[0].uri;
-      mimeType = result.assets[0].mimeType;
+      let uri = result.assets[0].uri;
+      let mimeType = result.assets[0].mimeType;
       const newAvatarUrl = await UploadImage(uri, mimeType);
       setAvatarUrl(`${newAvatarUrl}?${Date.now()}`);
     }

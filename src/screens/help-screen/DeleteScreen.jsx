@@ -1,8 +1,9 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
-import {Divider, useTheme} from "react-native-paper";
+import {View, Text, StyleSheet, TouchableOpacity, ToastAndroid} from "react-native";
+import {Button, Divider, useTheme} from "react-native-paper";
 import {ThemeContext} from "../../stores/themeContext";
 import useStyles from "./pageStyle";
+import {incrementHelpful, incrementHelpless} from "../../api/feedback";
 
 export default function DeleteScreen() {
     const {isDarkModeOn} = useContext(ThemeContext)
@@ -25,9 +26,11 @@ export default function DeleteScreen() {
         recordFeedback(false);
     };
 
-    const recordFeedback = (helpful, feedbackText) => {
+    const recordFeedback = async (helpful, feedbackText) => {
         // 可以在这里将用户的反馈信息发送到后端进行记录
         // 也可以将反馈信息保存在本地或数据库中
+        helpful ? await incrementHelpful() : await incrementHelpless()
+        ToastAndroid.show('😊反馈成功，感谢您的反馈！', ToastAndroid.SHORT);
         console.log("用户反馈：", helpful ? "有帮助" : "没帮助", feedbackText);
     };
     const styles = useStyles()
@@ -47,14 +50,14 @@ export default function DeleteScreen() {
                     onPress={handleHelpfulClick}
                     disabled={helpfulClicked || notHelpfulClicked}
                 >
-                    <Text style={[styles.buttonText,]}>有帮助</Text>
+                    <Button mode={helpfulClicked ? "outlined" : "contained"}>有帮助</Button>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={[styles.button, notHelpfulClicked && styles.buttonClicked]}
+                    style={[styles.button]}
                     onPress={handleNotHelpfulClick}
                     disabled={helpfulClicked || notHelpfulClicked}
                 >
-                    <Text style={[styles.buttonText,]}>没帮助</Text>
+                    <Button mode={notHelpfulClicked ? "outlined" : "contained"}>没帮助</Button>
                 </TouchableOpacity>
             </View>
         </View>

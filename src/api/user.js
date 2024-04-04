@@ -13,7 +13,8 @@ import {API_URL} from '@env'
  */
 
 /**
- * 这个函数从 API 获取当前用户的信息。
+ * @function getCurrentUser
+ * @description 这个函数从 API 获取当前用户的信息。
  * @returns {Promise<User>} 一个解析为用户数据的 Promise。
  * @throws {Error} 当有获取问题时抛出。
  */
@@ -31,9 +32,16 @@ async function getCurrentUser() {
     throw new Error(error);
   }
 }
+
+/**
+ * @function UploadImage
+ * @description 上传图片接口
+ * @param {string} imageUri
+ * @param {string} mimeType
+ * */
 async function UploadImage(imageUri,mimeType) {
   try {
-    const fileExtension = mimeType.split('/')[1]; 
+    const fileExtension = mimeType.split('/')[1];
     const jwtToken = await loadJwt();
     const formData = new FormData()
     const timestamp = Date.now();
@@ -61,7 +69,12 @@ async function UploadImage(imageUri,mimeType) {
   }
 }
 
-//更新用户信息
+/**
+ * @function updateUserProfile
+ * @description 更新用户信息
+ * @param formData
+ * @return {Promise<*>}
+ */
 async function updateUserProfile(formData) {
   try {
     const jwtToken = await loadJwt();
