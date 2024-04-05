@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {View} from "react-native";
+import {View, StyleSheet} from "react-native";
 import {Avatar, Button, Caption, Card, Text, TouchableRipple} from "react-native-paper";
 import {loadLoginState, saveLogoutState} from "../../utils/handleLoginState";
 import {getCurrentUser} from "../../api/user";
@@ -48,6 +48,7 @@ const UserScreen = ({logoutHandler, navigation}) => {
             navigation.navigate("Login");
         }
     };
+
     return (
         <View style={{flex: 1, padding: 25}}>
             {/* 用户信息 */}
@@ -62,21 +63,24 @@ const UserScreen = ({logoutHandler, navigation}) => {
                     />
                 </TouchableRipple>
                 <Text>{user.username}</Text>
-                {isLoggedIn && <Caption>@{user.username}</Caption>}
+                { isLoggedIn && <><Caption> @{user.username} | {user.gender} | {user.birthday} </Caption>
+                <Caption>邮箱：{user.email}</Caption>
+                <Caption>个人简介：{user.bio}</Caption></> }
             </View>
 
             {/* Todo统计 */}
             <Card style={{marginTop: 20}}>
                 <Card.Title title="Todo统计"/>
                 <Card.Content>
-                    <Text>你已经完成了 {todoNum} 条Todo</Text>
+                    <Text>你已经添加了 {todoNum} 条Todo</Text>
                 </Card.Content>
             </Card>
+
             {!isLoggedIn ? <Button icon="plus"
-                                  mode="contained"
-                                  onPress={() => {
-                                      navigation.navigate("Login")
-                                  }}>登录</Button> : <Button
+                                mode="contained"
+                                onPress={() => {
+                                    navigation.navigate("Login")
+                                }}>登录</Button> : <Button
                 icon="plus"
                 mode="contained"
                 onPress={async () => {
@@ -85,6 +89,9 @@ const UserScreen = ({logoutHandler, navigation}) => {
                     setIsLoggedIn(false); // 然后设置登录状态为 false
                     setUserInfo(null); // 并将用户信息设置为 null
                 }}
+                style={{
+                    marginTop: 10
+                }}
             >
                 注销
             </Button>}
@@ -92,6 +99,7 @@ const UserScreen = ({logoutHandler, navigation}) => {
         </View>
     );
 };
+
 export default withStorage(UserScreen)
 // <View>
 // <Text>UserSCreen</Text>

@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import React, { useState, useContext, useEffect } from "react";
+import { FlatList, StyleSheet, View, TouchableOpacity } from "react-native";
 import { List, FAB, Portal, Card, Button, Text } from "react-native-paper";
 // import todosData from "../stores/todos.json"; //测试数据
 import InputTodo from "./InputTodoModal";
@@ -10,7 +10,8 @@ import PinTodoModal from "./PinTodoModal";
 import TimeTodoModal from "./TimeTodoModal";
 import { AntDesign } from '@expo/vector-icons';
 import { ThemeContext } from "../stores/themeContext";
-const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage }) => {
+
+const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage, }) => {
 
     //添加部分
     const [addModalVisible, setAddModalVisible] = useState(false);
@@ -56,25 +57,74 @@ const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage
 
     //处理头顶标题样式
     const { isDarkModeOn, toggleTheme } = useContext(ThemeContext)
+    const [currentDate, setCurrentDate] = useState(new Date());
+
+    // 根据当前日期获取月份和周
+    const month = currentDate.toLocaleString('default', { month: 'long' });
+    const date = currentDate.getDate();
+    const week = currentDate.toLocaleString('default', { weekday: 'long' });
+
+    /*  const fetchTodoList = async () => {
+        try {
+            const response = await fetch(`${API_URL}/todos/add`);
+            if (!response.ok) {
+                throw new Error("无法获取todo列表");
+            }
+            const todoListData = await response.json();
+            setTodos(todoListData);
+        } catch (error) {
+            setError(error.message);
+        } 
+    }; */
+    
+    useEffect(() => {
+        // 在组件加载时调用后端 API 来获取 todo 数据
+        // fetchTodoList();
+        const timerID = setInterval(() => tick(), 1000);
+        return () => {
+            clearInterval(timerID);
+        };
+    }, []);
+    const tick = () => {
+        setCurrentDate(new Date());
+    };
+
     return (
         <View style={styles.container}>
             <FlatList
                 data={todos}
-                ListHeaderComponent={<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}><AntDesign name="checkcircleo" size={22} color={isDarkModeOn ? 'white' : 'black'} /><List.Section title="Todo App" titleStyle={{ fontSize: 18 }}></List.Section></View>}
+                ListHeaderComponent={
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+                    <AntDesign style={{fontWeight: 'bold', marginRight: 10 }} name="calendar" size={20} color={isDarkModeOn ? 'white' : 'black'} />
+                    <List.Section title="Pure Todo" titleStyle={{ fontSize: 20, fontWeight: 'bold'}}></List.Section>
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.date}>{date}</Text>
+                    <View style={styles.weekdayContainer}>
+                        <Text style={styles.month}>{month} | </Text>
+                        <Text style={styles.week}>周{week === '星期日' ? '日' : week === '星期一' ? '一' : week === '星期二' ? '二' : week === '星期三' ? '三' : week === '星期四' ? '四' : week === '星期五' ? '五' : '六'}</Text>
+                    </View>
+                    </View>
+        </View>}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                     <Card onLongPress={() => showPinDialog(item)} style={styles.card}>
                         <Card.Content>
                             <Text style={{
-                                lineHeight: 24, // 增加行高
+                                lineHeight: 20, // 增加行高
                                 textAlign: 'justify', // 文本对齐方式
-                                padding: 10, // 增加内边距
+                                padding: 4, // 增加内边距
                             }} variant="bodyLarge">{item.content}</Text>
                         </Card.Content>
                         <Card.Actions>
-                            <Button onPress={() => showUpdateModal(item.content)}>修改</Button>
-                            <Button onPress={() => showDeleteDialog(item.id)}>删除</Button>
-                            <Button onPress={() => showTimeDialog(item.content)}>设置提醒</Button>
+                        <TouchableOpacity onPress={() => showUpdateModal(item.content)}>
+                        <AntDesign name="edit" size={22} color={isDarkModeOn ? 'white' : 'black'} style={styles.icon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => showDeleteDialog(item.id)}>
+                        <AntDesign name="delete" size={22} color={isDarkModeOn ? 'white' : 'black'} style={styles.icon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => showTimeDialog(item.content)}>
+                        <AntDesign name="clockcircleo" size={22} color={isDarkModeOn ? 'white' : 'black'} style={styles.icon} />
+                        </TouchableOpacity>
                         </Card.Actions>
                     </Card>
                 )}
@@ -102,7 +152,6 @@ const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage
                 onPin={pinTodo}
                 todoToPin={todoToPin}
             />
-            {/*<Button onPress={async()=>{await clearTodos()}}>删除</Button>*/}
             <TimeTodoModal
                 visible={timeModalVisible}
                 hideDialog={hideTimeDialog}
@@ -134,12 +183,38 @@ const styles = StyleSheet.create({
         bottom: 100,
     },
     card: {
-        elevation: 5, // 添加阴影
-        borderRadius: 20, // 圆角
-        marginBottom: 20, // 间隔
-        marginLeft: 15, // 间隔
-        marginRight: 15, // 间隔
-    }
+        elevation: 10, // 添加阴影
+        borderRadius: 10, // 圆角
+        marginTop: 5,
+        marginBottom: 6, // 间隔
+        marginLeft: 10, // 间隔
+        marginRight: 10, // 间隔
+    },
+    dateContainer: {
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end'
+    },
+    date: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        marginRight: 5,
+    },
+    month: {
+        fontSize: 6,
+        color: '#999999',
+    },
+    weekdayContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    week: {
+        color: '#999999',
+        fontSize: 6,
+    },
+    icon: {
+        marginRight: 20, // 可根据需要调整图标与相邻元素之间的间距
+    },
 });
 
 export default withStorage(TodoLists);
