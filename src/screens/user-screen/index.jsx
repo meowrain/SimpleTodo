@@ -1,44 +1,53 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import {View, StyleSheet} from "react-native";
 import {Avatar, Button, Caption, Card, Text, TouchableRipple} from "react-native-paper";
 import {loadLoginState, saveLogoutState} from "../../utils/handleLoginState";
 import {getCurrentUser} from "../../api/user";
 import withStorage from "../../hoc/withStorage";
 import {getTodoNumFromBackend} from "../../api/todo";
+import {UserStateContext} from "../../stores/userStateContext";
 
 const UserScreen = ({logoutHandler, navigation}) => {
-    const [userInfo, setUserInfo] = useState(null)
+    const {needUpdateUserInfo, setNeedUpdateUserInfo} = useContext(UserStateContext)
+    console.log("是否需要更新？",needUpdateUserInfo)
+    const [userInfo, setUserInfo] = useState({
+        username: '',
+        gender: '',
+        birthday: '',
+        email: '',
+        phonenumber: '',
+        bio: '',
+    });
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [todoNum, setTodoNum] = useState(0)
     useEffect(() => {
+
         const fetchData = async () => {
             try {
                 const loginState = await loadLoginState();
                 setIsLoggedIn(loginState)
                 if (loginState) {
                     const user = await getCurrentUser()
-                    setUserInfo(user);
+                    setUserInfo({
+                        ...user, // 取出原有的 user 对象的所有属性
+                        avatar: `${user.avatar}?${Date.now()}` // 使用修改后的 avatar 替换原有的 avatar 属性
+                      });
                     const TodoNum = await getTodoNumFromBackend()
                     setTodoNum(TodoNum.count)
+                    setNeedUpdateUserInfo(false)
                 }
             } catch (error) {
                 console.error("加载用户失败", error)
             }
         }
-        fetchData()
-        return navigation.addListener('focus', () => {
-            fetchData();
-        });
-    }, []);
+        if(needUpdateUserInfo){
+            fetchData()
+        }
+        // return navigation.addListener('focus', () => {
+        //     fetchData();
+        // });
+    }, [needUpdateUserInfo,isLoggedIn]);
 
-// Temp user data
-    const user = isLoggedIn && userInfo ? {
-        avatarUrl: `${userInfo.avatar}?${Date.now()}`,
-        username: userInfo.username
-    } : {
-        avatarUrl: 'https://img.ixintu.com/download/jpg/20200905/d286ad90987b5bba8d8aa9320ef5b991_512_512.jpg!con',
-        username: "未登陆",
-    };
     const handleAvatarPress = () => {
         if (isLoggedIn) {
             // 如果用户已登录，导航到个人信息界面
@@ -50,22 +59,23 @@ const UserScreen = ({logoutHandler, navigation}) => {
     };
 
     return (
+
         <View style={{flex: 1, padding: 25}}>
             {/* 用户信息 */}
             <View style={{alignItems: "center"}}>
                 <TouchableRipple onPress={handleAvatarPress}>
                     <Avatar.Image
                         size={100}
-                        source={{uri: user.avatarUrl}} // Temp avatar url
+                        source={{uri: userInfo.avatar}} // Temp avatar url
                         style={{
                             marginBottom: 10
                         }}
                     />
                 </TouchableRipple>
-                <Text>{user.username}</Text>
-                { isLoggedIn && <><Caption> @{user.username} | {user.gender} | {user.birthday} </Caption>
-                <Caption>邮箱：{user.email}</Caption>
-                <Caption>个人简介：{user.bio}</Caption></> }
+                <Text>{userInfo.username}</Text>
+                {isLoggedIn && <><Caption> @{userInfo.username} | {userInfo.gender} | {userInfo.birthday} </Caption>
+                    <Caption>邮箱：{userInfo.email}</Caption>
+                    <Caption>个人简介：{userInfo.bio}</Caption></>}
             </View>
 
             {/* Todo统计 */}
@@ -77,10 +87,10 @@ const UserScreen = ({logoutHandler, navigation}) => {
             </Card>
 
             {!isLoggedIn ? <Button icon="plus"
-                                mode="contained"
-                                onPress={() => {
-                                    navigation.navigate("Login")
-                                }}>登录</Button> : <Button
+                                   mode="contained"
+                                   onPress={() => {
+                                       navigation.navigate("Login")
+                                   }}>登录</Button> : <Button
                 icon="plus"
                 mode="contained"
                 onPress={async () => {
@@ -101,20 +111,3 @@ const UserScreen = ({logoutHandler, navigation}) => {
 };
 
 export default withStorage(UserScreen)
-// <View>
-// <Text>UserSCreen</Text>
-// <Button
-//   icon="plus"
-//   mode="contained"
-//   onPress={() => navigation.navigate('Login')}
-// >
-//   进入登陆
-// </Button>
-// <Button
-//   icon="plus"
-//   mode="contained"
-//   onPress={() => navigation.navigate('SignIn')}
-// >
-//   进入注册
-// </Button>
-// </View>

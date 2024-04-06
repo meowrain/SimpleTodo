@@ -4,12 +4,13 @@ import { Button, Card, Divider, Text, TextInput, useTheme } from "react-native-p
 import { loginQuery } from "../../api/auth";
 import { saveLoginState } from "../../utils/handleLoginState";
 import { ToastAndroid } from "react-native";
+import {UserStateContext} from "../../stores/userStateContext";
 const LoginScreen = ({ navigation }) => {
     const { colors } = useTheme();
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState('');
-
+    const {needUpdateUserInfo, setNeedUpdateUserInfo} = React.useContext(UserStateContext)
 
     const handleLogin = async () => {
         if (!username || !password) {
@@ -26,11 +27,13 @@ const LoginScreen = ({ navigation }) => {
         try {
             const jwtToken = await loginQuery(userData);
             await saveLoginState(true)
+            console.log(jwtToken)
             //如果jwtToken不是空串或者undefined，就navigation.goBack()
             if (jwtToken) {
                 navigation.goBack();
                 ToastAndroid.show('✨登录成功!', ToastAndroid.SHORT);
                 setErrorMessage("")
+                setNeedUpdateUserInfo(true)
             }
             // console.log(res);
         } catch (error) {
