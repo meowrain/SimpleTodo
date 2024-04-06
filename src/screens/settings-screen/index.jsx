@@ -11,8 +11,8 @@ export default function SettingsScreen({navigation}) {
         <View>
             <View
                 style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10}}><Octicons
-                name="gear" size={22} color={isDarkModeOn ? 'white' : 'black'}/><List.Section title="设置"
-                                                                                              titleStyle={{fontSize: 18}}></List.Section></View>
+                name="gear" size={22} color={isDarkModeOn ? 'white' : 'black'}/>
+                <List.Section title="设置" titleStyle={{fontSize: 18}}></List.Section></View>
             <List.Section>
                 <List.Subheader>主题</List.Subheader>
                 <List.Item
@@ -23,7 +23,6 @@ export default function SettingsScreen({navigation}) {
                     )}
                 />
             </List.Section>
-
 
             <Divider/>
             <List.Section>
@@ -38,7 +37,7 @@ export default function SettingsScreen({navigation}) {
                 <List.Subheader>反馈</List.Subheader>
                 <List.Item
                     title="反馈问题"
-                    left={(props) => <List.Icon {...props} icon="help-circle"/>}
+                    left={(props) => <List.Icon {...props} icon="bell"/>}
                     onPress={() => navigation.navigate("feedBackScreen")}
                 />
             </List.Section>

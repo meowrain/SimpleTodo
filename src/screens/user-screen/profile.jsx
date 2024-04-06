@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, StyleSheet, ToastAndroid } from "react-native";
 import {
   Avatar,
-  Caption,
   Button,
   List,
   Divider,
@@ -91,7 +90,7 @@ const UserProfile = ({ navigation }) => {
     }
   };
 
-  //没应用
+  //保存
   const handleSaveProfile = async () => {
     try {
       // 调用更新用户信息的 API
