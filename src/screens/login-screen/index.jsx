@@ -10,7 +10,7 @@ const LoginScreen = ({ navigation }) => {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [errorMessage, setErrorMessage] = React.useState('');
-    const {needUpdateUserInfo, setNeedUpdateUserInfo} = React.useContext(UserStateContext)
+    const {needUpdateUserInfo, setNeedUpdateUserInfo,login,logout} = React.useContext(UserStateContext)
 
     const handleLogin = async () => {
         if (!username || !password) {
@@ -26,12 +26,12 @@ const LoginScreen = ({ navigation }) => {
 
         try {
             const jwtToken = await loginQuery(userData);
-            await saveLoginState(true)
-            console.log(jwtToken)
             //如果jwtToken不是空串或者undefined，就navigation.goBack()
             if (jwtToken) {
                 navigation.goBack();
                 ToastAndroid.show('✨登录成功!', ToastAndroid.SHORT);
+                await login()
+                console.log("登录成功",jwtToken)
                 setErrorMessage("")
                 setNeedUpdateUserInfo(true)
             }

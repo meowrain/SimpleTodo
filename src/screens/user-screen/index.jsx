@@ -8,8 +8,9 @@ import {getTodoNumFromBackend} from "../../api/todo";
 import {UserStateContext} from "../../stores/userStateContext";
 import unloginImage from '../../../assets/unlogin.jpg'
 const UserScreen = ({logoutHandler, navigation}) => {
-    const {needUpdateUserInfo, setNeedUpdateUserInfo} = useContext(UserStateContext)
+    const {needUpdateUserInfo, setNeedUpdateUserInfo,logout,isLoggedIn} = useContext(UserStateContext)
     console.log("是否需要更新？",needUpdateUserInfo)
+    console.log("是否已登录？",isLoggedIn)
     const [userInfo, setUserInfo] = useState({
         username: '未登录',
         gender: '',
@@ -18,14 +19,12 @@ const UserScreen = ({logoutHandler, navigation}) => {
         phonenumber: '',
         bio: '',
     });
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [todoNum, setTodoNum] = useState(0)
     useEffect(() => {
 
         const fetchData = async () => {
             try {
                 const loginState = await loadLoginState();
-                setIsLoggedIn(loginState)
                 if (loginState) {
                     const user = await getCurrentUser()
                     setUserInfo({
@@ -101,9 +100,9 @@ const UserScreen = ({logoutHandler, navigation}) => {
                 icon="plus"
                 mode="contained"
                 onPress={async () => {
+                    await logout()
                     await saveLogoutState();
                     await logoutHandler(); // 先调用 logoutHandler
-                    setIsLoggedIn(false); // 然后设置登录状态为 false
                     setTodoNum(0)
                     setUserInfo({
                         username: '未登录',

@@ -1,65 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import storage from "../stores/storage";
 import { addTodoBackend, deleteTodoFromBackend, getTodos, updateTodoFromBackend } from "../api/todo";
 import { getCurrentUser } from "../api/user";
-import { loadLoginState,saveLogoutState } from "../utils/handleLoginState";
+import { loadLoginState, saveLogoutState } from "../utils/handleLoginState";
+import { UserStateContext } from '../stores/userStateContext';
 const withStorage = (WrappedComponent) => {
     const WithStorageComponent = (props) => {
         const [todos, setTodos] = useState([]);
-        const [userID, setUserID] = useState(null);
-        const [loginStatus, setLoginStatus] = useState(false);
+        // const {isLoggedIn} = useContext(UserStateContext);
 
         useEffect(() => {
-            const fetchData = async () => {
-                try {
-                    const loginState = await loadLoginState();
-                    if (loginState) {
-                        const userInfo = await getCurrentUser();
-                        // console.log(userInfo)
-                        setUserID(userInfo.ID);
-                        const todosFromDB = await getTodos();
-                        const todos = todosFromDB.map(item => ({
-                            id: item.ID,    // 添加这一行
-                            userID: item.userID,
-                            content: item.content,
-                            status: item.status,
-                        }));
-                        setTodos(todos);
-                    } else {
-                        const savedTodos = await loadTodosFromStorage();
-                        setTodos(savedTodos);
-                    }
-                } catch (err) {
-                    console.error("Failed to fetch data", err);
+            const checkLogin = async () => {
+                // console.log("checkLogin",isLoggedIn);
+                const isLoggedIn = await loadLoginState();
+                if (isLoggedIn) {
+                    await fetchTodos();
+                } else {
+                    const savedTodos = await loadTodosFromStorage();
+                    setTodos(savedTodos);
                 }
             };
-            fetchData();
-        }, []);
-
-        useEffect(() => {
-            const loadData = async () => {
-                try {
-                    const loginState = await loadLoginState();
-                    setLoginStatus(loginState);
-                    if (loginState) {
-                        await fetchTodos();
-                    }
-                } catch (err) {
-                    console.error("Failed to load data", err);
-                }
-            };
-            const unsubscribe = props.navigation.addListener('focus', loadData);
+            const unsubscribe = props.navigation.addListener('focus', checkLogin);
             return () => unsubscribe;
+            
         }, [props.navigation]);
-        // useEffect(() => {
-        //     if (loginStatus) {
-        //         try {
-        //             mergeTodosOnLogin();
-        //         } catch (err) {
-        //             console.error(err)
-        //         }
-        //     }
-        // }, [loginStatus]);
+
         const fetchTodos = async () => {
             try {
                 const todosFromDB = await getTodos();
@@ -69,8 +34,8 @@ const withStorage = (WrappedComponent) => {
                     status: item.status,
                     id: item.ID,
                 }));
-                await saveTodos(todos);
                 setTodos(todos);
+                await saveTodos(todos);
             } catch (err) {
                 console.error("Failed to fetch todos", err);
             }
@@ -88,15 +53,17 @@ const withStorage = (WrappedComponent) => {
             return cleanupStorage;
         }, []);
         const addTodo = async (task) => {
+            const isLoggedIn = await loadLoginState();
+            const userInfo = await getCurrentUser();
             const newTodo = {
                 id: null,
                 content: task,
-                userID,
+                userID: userInfo.ID,
                 status: 0,
                 tag: ''
             };
 
-            if (loginStatus) {
+            if (isLoggedIn) {
                 try {
                     // 后端处理新待办事项并且返回包含新id的待办事项
                     const addedTodo = await addTodoBackend(newTodo);
@@ -127,8 +94,8 @@ const withStorage = (WrappedComponent) => {
             );
             setTodos(updatedTodos);
             await saveTodos(updatedTodos);
-
-            if (loginStatus) {
+            const isLoggedIn = await loadLoginState();
+            if (isLoggedIn) {
                 // 找到要更新的 todo 的 id
                 const todoToUpdate = updatedTodos.find(todo => todo.content === newContent);
                 if (todoToUpdate) {
@@ -140,10 +107,12 @@ const withStorage = (WrappedComponent) => {
         };
 
         const deleteTodo = async (id) => {
+
             const updatedTodos = todos.filter(todo => todo.id !== id);
             setTodos(updatedTodos);
             await saveTodos(updatedTodos);
-            if (loginStatus) {
+            const isLoggedIn = await loadLoginState();
+            if (isLoggedIn) {
                 await deleteTodoFromBackend(id)
             }
         };
@@ -225,7 +194,6 @@ const withStorage = (WrappedComponent) => {
         const loadTempTodosFromStorage = async () => {
             try {
                 const tempTodos = await storage.load({ key: 'tempTodos' });
-                console.log(tempTodos)
                 return tempTodos || null;
             } catch (error) {
                 if (error.name === 'NotFoundError') {
@@ -242,14 +210,14 @@ const withStorage = (WrappedComponent) => {
                 await saveLogoutState();
                 // 清空本地存储中的 todos 数据
                 await clearTodos();
-                // 设置登录状态为 false
-                setLoginStatus(false);
+            
             } catch (error) {
                 console.error('Failed to handle logout', error);
             }
         };
         const reloadPage = async () => {
-            if (!loginStatus) {
+            const isLoggedIn = await loadLoginState();
+            if (!isLoggedIn) {
                 try {
                     const todosFromStorage = await loadTodosFromStorage()
                     setTodos(todosFromStorage)
@@ -257,8 +225,6 @@ const withStorage = (WrappedComponent) => {
                     console.error(err)
                 }
             } else {
-                const userInfo = await getCurrentUser();
-                setUserID(userInfo.ID);
                 const todosFromDB = await getTodos();
                 const todos = todosFromDB.map(item => ({
                     userID: item.userID,
