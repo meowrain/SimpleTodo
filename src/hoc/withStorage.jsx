@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import storage from "../stores/storage";
 import { addTodoBackend, deleteTodoFromBackend, getTodos, updateTodoFromBackend } from "../api/todo";
 import { getCurrentUser } from "../api/user";
-import { loadLoginState } from "../utils/handleLoginState";
+import { loadLoginState,saveLogoutState } from "../utils/handleLoginState";
 const withStorage = (WrappedComponent) => {
     const WithStorageComponent = (props) => {
         const [todos, setTodos] = useState([]);
@@ -239,6 +239,7 @@ const withStorage = (WrappedComponent) => {
         };
         const logoutHandler = async () => {
             try {
+                await saveLogoutState();
                 // 清空本地存储中的 todos 数据
                 await clearTodos();
                 // 设置登录状态为 false

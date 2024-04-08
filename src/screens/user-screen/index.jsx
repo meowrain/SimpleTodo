@@ -1,17 +1,17 @@
 import React, {useEffect, useState, useContext} from "react";
-import {View, StyleSheet} from "react-native";
+import {View} from "react-native";
 import {Avatar, Button, Caption, Card, Text, TouchableRipple} from "react-native-paper";
 import {loadLoginState, saveLogoutState} from "../../utils/handleLoginState";
 import {getCurrentUser} from "../../api/user";
 import withStorage from "../../hoc/withStorage";
 import {getTodoNumFromBackend} from "../../api/todo";
 import {UserStateContext} from "../../stores/userStateContext";
-
+import unloginImage from '../../../assets/unlogin.jpg'
 const UserScreen = ({logoutHandler, navigation}) => {
     const {needUpdateUserInfo, setNeedUpdateUserInfo} = useContext(UserStateContext)
     console.log("是否需要更新？",needUpdateUserInfo)
     const [userInfo, setUserInfo] = useState({
-        username: '',
+        username: '未登录',
         gender: '',
         birthday: '',
         email: '',
@@ -35,6 +35,16 @@ const UserScreen = ({logoutHandler, navigation}) => {
                     const TodoNum = await getTodoNumFromBackend()
                     setTodoNum(TodoNum.count)
                     setNeedUpdateUserInfo(false)
+                }else {
+                    setUserInfo({
+                        username: '未登录',
+                        gender: '',
+                        birthday: '',
+                        email: '',
+                        phonenumber: '',
+                        bio: '',
+                        avatar: unloginImage // 设置为本地图像资源
+                    });
                 }
             } catch (error) {
                 console.error("加载用户失败", error)
@@ -43,9 +53,6 @@ const UserScreen = ({logoutHandler, navigation}) => {
         if(needUpdateUserInfo){
             fetchData()
         }
-        // return navigation.addListener('focus', () => {
-        //     fetchData();
-        // });
     }, [needUpdateUserInfo,isLoggedIn]);
 
     const handleAvatarPress = () => {
@@ -66,7 +73,7 @@ const UserScreen = ({logoutHandler, navigation}) => {
                 <TouchableRipple onPress={handleAvatarPress}>
                     <Avatar.Image
                         size={100}
-                        source={{uri: userInfo.avatar}} // Temp avatar url
+                        source={isLoggedIn ? { uri: userInfo.avatar } : unloginImage}
                         style={{
                             marginBottom: 10
                         }}
@@ -94,10 +101,18 @@ const UserScreen = ({logoutHandler, navigation}) => {
                 icon="plus"
                 mode="contained"
                 onPress={async () => {
-                    await saveLogoutState();
                     await logoutHandler(); // 先调用 logoutHandler
                     setIsLoggedIn(false); // 然后设置登录状态为 false
-                    setUserInfo(null); // 并将用户信息设置为 null
+                    setTodoNum(0)
+                    setUserInfo({
+                        username: '未登录',
+                        gender: '',
+                        birthday: '',
+                        email: '',
+                        phonenumber: '',
+                        bio: '',
+                        avatar: unloginImage
+                    }); // 并将用户信息设置为 null
                 }}
                 style={{
                     marginTop: 10
