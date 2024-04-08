@@ -101,6 +101,7 @@ const UserScreen = ({logoutHandler, navigation}) => {
                 icon="plus"
                 mode="contained"
                 onPress={async () => {
+                    await saveLogoutState();
                     await logoutHandler(); // 先调用 logoutHandler
                     setIsLoggedIn(false); // 然后设置登录状态为 false
                     setTodoNum(0)
