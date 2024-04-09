@@ -38,8 +38,8 @@ export default function TimeScreen() {
             <Text style={styles.title}>如何为todo设置提醒时间？</Text>
             <Divider/>
             <Text style={styles.step}>1. 找到你想要设置提醒的todo</Text>
-            <Text style={styles.step}>2. 在todo里点击设置提醒</Text>
-            <Text style={styles.step}>3. 输入提醒时间就可以成功设置提醒了</Text>
+            <Text style={styles.step}>2. 在todo里点击闹钟图标</Text>
+            <Text style={styles.step}>3. 输入提醒时间以后就可以成功设置提醒</Text>
             <Divider/>
             <Text style={styles.note}>以上内容是否对你有帮助？</Text>
             <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>

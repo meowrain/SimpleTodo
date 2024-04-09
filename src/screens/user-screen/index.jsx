@@ -90,6 +90,9 @@ const UserScreen = ({ logoutHandler, navigation }) => {
                 mode="contained"
                 onPress={() => {
                     navigation.navigate("Login")
+                }}
+                style={{
+                    marginTop: 30
                 }}>登录</Button> : <Button
                     icon="plus"
                     mode="contained"

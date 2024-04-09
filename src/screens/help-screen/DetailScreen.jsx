@@ -34,21 +34,21 @@ export default function HelperScreenDetail({navigation}) {
 
             <List.Section>
                 <List.Item
-                    title="如何为todo设置提醒时间？"
+                    title="如何为todo设置提醒？"
                     left={(props) => <List.Icon {...props} icon="help-circle"/>}
                     onPress={() => navigation.navigate("timeScreen")}
                 />
             </List.Section>
             <Divider/>
 
-            <List.Section>
+            {/* <List.Section>
                 <List.Item
                     title="如何一键删除todo?"
                     left={(props) => <List.Icon {...props} icon="help-circle"/>}
                     onPress={() => navigation.navigate("deleteScreen")}
                 />
             </List.Section>
-            <Divider/>
+            <Divider/> */}
         </View>
     )
 }
