@@ -36,11 +36,11 @@ export default function UpScreen() {
 
     return (
         <View style={[styles.container, {backgroundColor: colors.background}]}>
-            <Text style={styles.title}>如何顶置行程？</Text>
+            <Text style={styles.title}>如何顶置todo？</Text>
             <Divider/>
-            <Text style={styles.step}>1. 长按你想要顶置的行程</Text>
-            <Text style={styles.step}>2. 在弹出的悬浮框中点击确定</Text>
-            <Text style={styles.step}>3. 这样就可以在页面顶部看到你的顶置行程</Text>
+            <Text style={styles.step}>1. 长按你想要顶置的todo</Text>
+            <Text style={styles.step}>2. 在弹出的虚拟悬浮框中点击确定</Text>
+            <Text style={styles.step}>3. 这样就可以在页面顶部看到你的顶置todo</Text>
             <Divider/>
             <Text style={styles.note}>以上内容是否对你有帮助？</Text>
             <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>

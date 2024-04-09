@@ -24,8 +24,8 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
     },
     "assetBundlePatterns": [
       "**/*"
@@ -42,7 +42,15 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
+
         "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "mdpi": "./assets/mipmap-mdpi/ic_launcher.png",
+        "hdpi": "./assets/mipmap-hdpi/ic_launcher.png",
+        "xhdpi": "./assets/mipmap-xhdpi/ic_launcher.png",
+        "xxhdpi": "./assets/mipmap-xxhdpi/ic_launcher.png",
+        "xxxhdpi": "./assets/mipmap-xxxhdpi/ic_launcher.png"
       },
       "permissions": [
         "android.permission.READ_CALENDAR",
@@ -51,7 +59,7 @@
       "package": "com.meowrain.todoMy"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/web_hi_res_512.png"
     },
     "extra": {
       "eas": {
