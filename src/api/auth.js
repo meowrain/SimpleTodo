@@ -20,6 +20,8 @@ async function registerQuery(userData) {
     if (resJson.msg === "success") {
       console.log("注册成功！");
       return resJson.data;
+    }else if(resJson.code === 400) {
+      console.log("注册失败，用户名已存在");
     }
   } catch (error) {
     throw error; // 重新抛出错误以便被捕获

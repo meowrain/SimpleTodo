@@ -24,8 +24,10 @@ const RegisterScreen = ({ navigation }) => {
         ToastAndroid.show('✨注册成功!', ToastAndroid.SHORT);
         setErrorMessage("");
         navigation.goBack();
+      }else{
+        ToastAndroid.show('😢注册失败,用户名已存在!', ToastAndroid.SHORT);
+        setErrorMessage("注册失败,用户名已存在!");
       }
-      console.log(res)
     } catch (err) {
       console.error("注册失败:", err);
       setErrorMessage("注册失败,请稍后重试");
