@@ -24,7 +24,7 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
@@ -51,7 +51,7 @@
       "package": "com.meowrain.todoMy"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/web_hi_res_512.png"
     },
     "extra": {
       "eas": {
