@@ -46,6 +46,7 @@
         "backgroundColor": "#ffffff"
       },
       "splash": {
+        "backgroundColor": "#ffffff",
         "mdpi": "./assets/mipmap-mdpi/ic_launcher.png",
         "hdpi": "./assets/mipmap-hdpi/ic_launcher.png",
         "xhdpi": "./assets/mipmap-xhdpi/ic_launcher.png",
