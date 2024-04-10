@@ -3,7 +3,7 @@ import storage from "../stores/storage";
 import { addTodoBackend, deleteTodoFromBackend, getTodos, updateTodoFromBackend } from "../api/todo";
 import { getCurrentUser } from "../api/user";
 import { loadLoginState, saveLogoutState } from "../utils/handleLoginState";
-import { UserStateContext } from '../stores/userStateContext';
+import { ToastAndroid } from 'react-native';
 const withStorage = (WrappedComponent) => {
     const WithStorageComponent = (props) => {
         const [todos, setTodos] = useState([]);
@@ -22,7 +22,7 @@ const withStorage = (WrappedComponent) => {
             };
             const unsubscribe = props.navigation.addListener('focus', checkLogin);
             return () => unsubscribe;
-            
+
         }, [props.navigation]);
 
         const fetchTodos = async () => {
@@ -54,16 +54,16 @@ const withStorage = (WrappedComponent) => {
         }, []);
         const addTodo = async (task) => {
             const isLoggedIn = await loadLoginState();
-            const userInfo = await getCurrentUser();
-            const newTodo = {
-                id: null,
-                content: task,
-                userID: userInfo.ID,
-                status: 0,
-                tag: ''
-            };
-
+            console.log("withStorage", isLoggedIn)
             if (isLoggedIn) {
+                const userInfo = await getCurrentUser();
+                const newTodo = {
+                    id: null,
+                    content: task,
+                    userID: userInfo.ID,
+                    status: 0,
+                    tag: ''
+                };
                 try {
                     // 后端处理新待办事项并且返回包含新id的待办事项
                     const addedTodo = await addTodoBackend(newTodo);
@@ -81,10 +81,11 @@ const withStorage = (WrappedComponent) => {
                     console.error("Failed to add todo", err);
                 }
             } else {
-                newTodo.id = todos.length ? todos[todos.length - 1].id + 1 : 1;
-                const newTodos = [...todos, newTodo];
-                setTodos(newTodos);
-                await saveTodos(newTodos);
+                ToastAndroid.show('😊请先登录', ToastAndroid.SHORT);
+                // newTodo.id = todos.length ? todos[todos.length - 1].id + 1 : 1;
+                // const newTodos = [...todos, newTodo];
+                // setTodos(newTodos);
+                // await saveTodos(newTodos);
             }
         };
 
@@ -157,60 +158,60 @@ const withStorage = (WrappedComponent) => {
                 console.error("Failed to clear todos", error);
             }
         };
-        const mergeTodosOnLogin = async () => {
-            try {
-                const tempTodos = await loadTempTodosFromStorage();
-                const savedTodos = await loadTodosFromStorage();
+        // const mergeTodosOnLogin = async () => {
+        //     try {
+        //         const tempTodos = await loadTempTodosFromStorage();
+        //         const savedTodos = await loadTodosFromStorage();
 
-                if (tempTodos !== null && tempTodos.length > 0) {
-                    await clearTodos(); // 清空之前的待办事项列表
-                    const mergedTodos = tempTodos.map(tempTodo => ({
-                        ...tempTodo,
-                        userID: userID,
-                    }));
-                    // 将临时保存的待办事项发送到后端
-                    await Promise.all(mergedTodos.map(async todo => {
-                        await addTodoBackend(todo);
-                    }));
-                    await storage.remove({ key: 'tempTodos' }); // 清空临时保存的待办事项
-                } else if (savedTodos.length > 0) {
-                    // 如果没有临时待办事项,但有之前保存的待办事项,则合并之前的待办事项
-                    await clearTodos(); // 清空之前的待办事项列表
-                    const mergedTodos = savedTodos.map(todo => ({
-                        ...todo,
-                        userID: userID,
-                    }));
-                    // 将之前保存的待办事项发送到后端
-                    await Promise.all(mergedTodos.map(async todo => {
-                        await addTodoBackend(todo);
-                    }));
-                }
+        //         if (tempTodos !== null && tempTodos.length > 0) {
+        //             await clearTodos(); // 清空之前的待办事项列表
+        //             const mergedTodos = tempTodos.map(tempTodo => ({
+        //                 ...tempTodo,
+        //                 userID: userID,
+        //             }));
+        //             // 将临时保存的待办事项发送到后端
+        //             await Promise.all(mergedTodos.map(async todo => {
+        //                 await addTodoBackend(todo);
+        //             }));
+        //             await storage.remove({ key: 'tempTodos' }); // 清空临时保存的待办事项
+        //         } else if (savedTodos.length > 0) {
+        //             // 如果没有临时待办事项,但有之前保存的待办事项,则合并之前的待办事项
+        //             await clearTodos(); // 清空之前的待办事项列表
+        //             const mergedTodos = savedTodos.map(todo => ({
+        //                 ...todo,
+        //                 userID: userID,
+        //             }));
+        //             // 将之前保存的待办事项发送到后端
+        //             await Promise.all(mergedTodos.map(async todo => {
+        //                 await addTodoBackend(todo);
+        //             }));
+        //         }
 
-                await fetchTodos(); // 从后端获取最新的待办事项列表
-            } catch (error) {
-                console.error("Error merging todos on login", error);
-            }
-        };
-        const loadTempTodosFromStorage = async () => {
-            try {
-                const tempTodos = await storage.load({ key: 'tempTodos' });
-                return tempTodos || null;
-            } catch (error) {
-                if (error.name === 'NotFoundError') {
-                    // 如果本地存储中没有 'tempTodos' 键值对,返回 null
-                    return null;
-                } else {
-                    console.error('Failed to load tempTodos from storage', error);
-                    return null;
-                }
-            }
-        };
+        //         await fetchTodos(); // 从后端获取最新的待办事项列表
+        //     } catch (error) {
+        //         console.error("Error merging todos on login", error);
+        //     }
+        // };
+        // const loadTempTodosFromStorage = async () => {
+        //     try {
+        //         const tempTodos = await storage.load({ key: 'tempTodos' });
+        //         return tempTodos || null;
+        //     } catch (error) {
+        //         if (error.name === 'NotFoundError') {
+        //             // 如果本地存储中没有 'tempTodos' 键值对,返回 null
+        //             return null;
+        //         } else {
+        //             console.error('Failed to load tempTodos from storage', error);
+        //             return null;
+        //         }
+        //     }
+        // };
         const logoutHandler = async () => {
             try {
                 await saveLogoutState();
                 // 清空本地存储中的 todos 数据
                 await clearTodos();
-            
+
             } catch (error) {
                 console.error('Failed to handle logout', error);
             }
@@ -244,7 +245,7 @@ const withStorage = (WrappedComponent) => {
                 deleteTodo={deleteTodo}
                 moveTodoToTop={moveTodoToTop}
                 clearTodos={clearTodos}
-                mergeTodosOnLogin={mergeTodosOnLogin}
+                // mergeTodosOnLogin={mergeTodosOnLogin}
                 logoutHandler={logoutHandler}
                 reloadPage={reloadPage}
                 {...props}

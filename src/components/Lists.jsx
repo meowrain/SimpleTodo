@@ -6,7 +6,7 @@ import InputTodo from "./InputTodoModal";
 import DeleteTodo from "./DeleteTodoModal";
 import UpdateTodo from "./UpdateTodoModal";
 import withStorage from "../hoc/withStorage";
-import PinTodoModal from "./PinTodoModal";
+// import PinTodoModal from "./PinTodoModal";
 import TimeTodoModal from "./TimeTodoModal";
 import { AntDesign } from '@expo/vector-icons';
 import { ThemeContext } from "../stores/themeContext";
@@ -37,14 +37,14 @@ const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage
     const hideDeleteDialog = () => setDialogVisible(false);
 
     //置顶部分
-    const [pinDialogVisible, setPinDialogVisible] = useState(false)
-    const [todoToPin, setTodoToPin] = useState(null);
-    const showPinDialog = (todo) => {
-        // console.log(todo)
-        setTodoToPin(todo)
-        setPinDialogVisible(true)
-    }
-    const hidePinDialog = () => setPinDialogVisible(false)
+    // const [pinDialogVisible, setPinDialogVisible] = useState(false)
+    // const [todoToPin, setTodoToPin] = useState(null);
+    // const showPinDialog = (todo) => {
+    //     // console.log(todo)
+    //     setTodoToPin(todo)
+    //     setPinDialogVisible(true)
+    // }
+    // const hidePinDialog = () => setPinDialogVisible(false)
 
     //提醒部分
     const [timeModalVisible, setTimeModalVisible] = useState(false);
@@ -107,7 +107,7 @@ const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage
         </View>}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
-                    <Card onLongPress={() => showPinDialog(item)} style={styles.card}>
+                    <Card style={styles.card}>
                         <Card.Content>
                             <Text style={{
                                 lineHeight: 20, // 增加行高
@@ -146,12 +146,12 @@ const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage
                 hideDialog={hideDeleteDialog}
                 onDelete={() => deleteTodo(currentTodoId)}
             />
-            <PinTodoModal
+            {/* <PinTodoModal
                 visible={pinDialogVisible}
                 hideDialog={hidePinDialog}
                 onPin={pinTodo}
                 todoToPin={todoToPin}
-            />
+            /> */}
             <TimeTodoModal
                 visible={timeModalVisible}
                 hideDialog={hideTimeDialog}

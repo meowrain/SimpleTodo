@@ -26,14 +26,6 @@ export default function SettingsScreen({navigation}) {
 
             <Divider/>
             <List.Section>
-                <List.Subheader>工具</List.Subheader>
-                <List.Item
-                    title="备份与恢复"
-                    left={(props) => <Octicons {...props} name="gear" size={20} color="black"/>}
-                ></List.Item>
-            </List.Section>
-            <Divider/>
-            <List.Section>
                 <List.Subheader>反馈</List.Subheader>
                 <List.Item
                     title="反馈问题"

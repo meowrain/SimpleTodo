@@ -23,14 +23,14 @@ export default function HelperScreenDetail({navigation}) {
             </List.Section>
             <Divider/>
 
-            <List.Section>
+            {/* <List.Section>
                 <List.Item
                     title="如何顶置todo？"
                     left={(props) => <List.Icon {...props} icon="help-circle"/>}
                     onPress={() => navigation.navigate("upScreen")}
                 />
             </List.Section>
-            <Divider/>
+            <Divider/> */}
 
             <List.Section>
                 <List.Item

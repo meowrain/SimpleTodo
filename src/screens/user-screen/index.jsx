@@ -6,7 +6,6 @@ import { getCurrentUser } from "../../api/user";
 import withStorage from "../../hoc/withStorage";
 import { getTodoNumFromBackend } from "../../api/todo";
 import { UserStateContext } from "../../stores/userStateContext";
-import unloginImage from '../../../assets/unlogin.jpg'
 const UserScreen = ({ logoutHandler, navigation }) => {
     const { needUpdateUserInfo, setNeedUpdateUserInfo, logout } = useContext(UserStateContext)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -28,7 +27,17 @@ const UserScreen = ({ logoutHandler, navigation }) => {
             fetchData()
         }
     }, [needUpdateUserInfo]);
-
+    useEffect(() => {
+        async function fetchTodoNum() {
+            const loginState = await loadLoginState();
+            if (loginState) {
+                const TodoNum = await getTodoNumFromBackend()
+                setTodoNum(TodoNum.count)
+            }
+        }
+        const unsubscribe = navigation.addListener('focus', fetchTodoNum);
+        return () => unsubscribe;
+    }, [navigation]);
     const fetchData = async () => {
         try {
             const loginState = await loadLoginState();

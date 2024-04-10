@@ -13,7 +13,7 @@ import {ThemeContext} from "../stores/themeContext";
 import UserProfile from "../screens/user-screen/profile";
 import HelperScreenDetail from "../screens/help-screen/DetailScreen";
 import AddScreen from "../screens/help-screen/AddScreen";
-import UpScreen from "../screens/help-screen/UpScreen";
+// import UpScreen from "../screens/help-screen/UpScreen";
 import DeleteScreen from "../screens/help-screen/DeleteScreen";
 import TimeScreen from "../screens/help-screen/TimeScreen";
 import FeedBackScreen from "../screens/feedback-screen/FeedBack";
@@ -88,9 +88,9 @@ export default function TodoNavigationContainer({children}) {
                 <Stack.Screen name="addScreen" component={AddScreen} options={{
                     headerShown: false
                 }}/>
-                <Stack.Screen name="upScreen" component={UpScreen} options={{
+                {/* <Stack.Screen name="upScreen" component={UpScreen} options={{
                     headerShown: false
-                }}/>
+                }}/> */}
                 <Stack.Screen name="deleteScreen" component={DeleteScreen} options={{
                     headerShown: false
                 }}/>
