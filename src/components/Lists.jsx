@@ -96,7 +96,7 @@ const TodoLists = ({ todos, addTodo, updateTodo, deleteTodo, pinTodo, reloadPage
                 ListHeaderComponent={
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
                     <AntDesign style={{fontWeight: 'bold', marginRight: 10 }} name="calendar" size={20} color={isDarkModeOn ? 'white' : 'black'} />
-                    <List.Section title="Pure Todo" titleStyle={{ fontSize: 20, fontWeight: 'bold'}}></List.Section>
+                    <List.Section title="Simple Todo" titleStyle={{ fontSize: 20, fontWeight: 'bold'}}></List.Section>
                     <View style={styles.dateContainer}>
                         <Text style={styles.date}>{date}</Text>
                     <View style={styles.weekdayContainer}>

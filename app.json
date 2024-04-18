@@ -16,8 +16,8 @@
         }
       ]
     ],
-    "name": "PureTodo",
-    "slug": "PureTodo",
+    "name": "SimpleTodo",
+    "slug": "SimpleTodo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -42,7 +42,6 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-
         "backgroundColor": "#ffffff"
       },
       "splash": {
@@ -64,7 +63,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3b965348-a6a8-4bec-be26-bc30b9522953"
+        "projectId": "23f4c5b2-2a66-4139-a944-0f5854161020"
       }
     }
   }
